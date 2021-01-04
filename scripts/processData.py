@@ -43,7 +43,7 @@ class processData:
                 .select('location', indicator)
                 .sort(col(indicator).asc()).limit(num_countries))
 
-    # Returns the up-to-date indicator's  value for each continent
+    # Returns the up-to-date indicator's average value for each continent
     def get_indicator_by_continent(self, indicator):
         return (self.df_covid_data.filter(self.df_covid_data[indicator].isNotNull())
                 .filter(self.df_covid_data['continent'].isNotNull())
