@@ -1,7 +1,7 @@
 # Example of main. 
 # It only tries some implemented functions in order to see if they work properly
 
-import economicData
+import economicData, populationData, processData
 import covidData, covidData_graphs, os, sys
 from pyspark.sql import SparkSession
 
