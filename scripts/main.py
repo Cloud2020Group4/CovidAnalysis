@@ -1,6 +1,7 @@
 # Example of main. 
 # It only tries some implemented functions in order to see if they work properly
 
+import economicData
 import covidData, covidData_graphs, os, sys
 from pyspark.sql import SparkSession
 
@@ -31,3 +32,13 @@ data.get_average_cases_per_day_per_month_a_country('Spain').show()
 #data.get_data_a_month_a_country(7, 'Spain', plot = True).show()
 
 data.get_average_data_per_day_per_month_a_country('Spain', plot = True).show()
+
+
+#economicData = economicData.EconomicData(spark)
+#df = get_economic_data_per_country('Spain')
+#df = get_economic_indicator_per_country('Spain', 'gdp_per_capita')
+#df = get_countries_with_highest_economic_indicator(10, 'gdp_per_capita')
+#df = get_countries_with_lowest_economic_indicator(10, 'gdp_per_capita')
+#df = get_economic_indicator_by_continent('gdp_per_capita')
+#df = get_economic_data_by_continent()
+#df.coalesce(1).write.save(path='./output', format='csv', mode='append', sep='\t')
