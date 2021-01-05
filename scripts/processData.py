@@ -58,7 +58,7 @@ class ProcessData:
     
     # Returns the 'num_countries' countries with the lowest up-to-date indicator's value
     def get_countries_with_lowest_indicator(self, num_countries, indicator,plot = False):
-        df = (self.df_covid_data.filter(self.df_covid_data[indicator].isNotNull() (self.df_covid_data['location'] != 'World') & (self.df_covid_data['location'] != 'International'))
+        df = (self.df_covid_data.filter(self.df_covid_data[indicator].isNotNull()  & (self.df_covid_data['location'] != 'World') & (self.df_covid_data['location'] != 'International'))
                 .groupBy('location', indicator)
                 .agg(max('date'))
                 .select('location', indicator)
