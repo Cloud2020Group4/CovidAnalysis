@@ -2090,6 +2090,67 @@ input, select, textarea {
 		text-transform: uppercase;
 		white-space: nowrap;
 	}
+	.drop-button{
+  background-color:  #8DEBF7;
+  color: #fff;
+  padding: 15px;
+  border-radius: 5px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+/*Botón hover y focus*/
+.drop-button:hover, drop-buttton:hover{
+  background-color: #2EABAB;
+}
+
+/*Posición del contenedor*/
+.dropdown{
+  position: relative;
+  display: inline-block;
+ }
+
+ #menuC{
+	 display: none;
+ }
+ #menuG{
+	display: none;
+}
+#menuJ{
+	display: none;
+}
+#menuD{
+	display: none;
+}
+#menuP{
+	display: none;
+}
+
+/*submenu*/
+.dropdown-content{
+  display: none;
+  position: absolute;
+  min-width: 100px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a{
+  color: #207878;
+  padding: 12px 16px;
+  display: block;
+}
+
+.dropdown-content a:hover{
+  background-color: #f1f1f1
+}
+.show {
+  display: block;
+}
+
+
+
 
 		input[type="submit"].icon:before,
 		input[type="reset"].icon:before,
@@ -2236,6 +2297,8 @@ input, select, textarea {
 			.button.primary:hover {
 				background-color: #18bfef;
 			}
+
+			
 
 /* Form */
 
@@ -4687,3 +4750,4 @@ input, select, textarea {
 		}
 
 	}
+
