@@ -68,6 +68,7 @@ def get_correct_columns(smoothed, totals, relative):
     return cases, deaths, cases_text, deaths_text
 
 
+
 def get_column_natural_name(column):
     sw = {
         'stringency_index': 'Stringency index',
@@ -88,3 +89,15 @@ def get_column_natural_name(column):
         'human_development_index':'Development index',
     }
     return sw.get(column)
+
+def get_correct_names_aggregate(avg):
+    if avg:
+        aggregate = 'avg'
+        file_text = 'avg'
+        text = 'Average daily'
+    else:
+        aggregate = 'sum'
+        file_text = 'total'
+        text = 'Total'
+    return aggregate, file_text, text
+
