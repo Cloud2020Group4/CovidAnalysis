@@ -42,3 +42,15 @@ data.get_average_data_per_day_per_month_a_country('Spain', plot = True).show()
 #df = get_economic_indicator_by_continent('gdp_per_capita')
 #df = get_economic_data_by_continent()
 #df.coalesce(1).write.save(path='./output', format='csv', mode='append', sep='\t')
+© 2021 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Help
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
