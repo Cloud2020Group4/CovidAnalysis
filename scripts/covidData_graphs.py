@@ -5,6 +5,7 @@ import covidData, utils
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+from pyspark.sql.functions import col
 
 def plot_dataframe_with_date(df, columnX, columnY, name, save_name, xlabel = None, ylabel = None):
     plt.close('all')
@@ -57,6 +58,26 @@ def plot_bars(df, bar_names, bar_values, name, save_name):
         os.remove(save_name)
     plt.savefig(save_name)
     print('Graph saved at ' + save_name)
+
+def plot_three_bars_continent(df, bar_names, bar_values1, bar_values2, bar_values3, name, save_name, label1, label2, label3):
+    plt.close('all')
+    fig, ax = plt.subplots()
+    bars = [row[0] for row in df.select(bar_names).collect()]
+    values1 = [row[0] for row in df.select(bar_values1).collect()]
+    values2 = [row[0] for row in df.select(bar_values2).collect()]
+    values3 = [row[0] for row in df.select(bar_values3).collect()]
+    pos = np.arange(len(bars))
+    ax.bar(pos + 0.0, values1, label = label1, width=0.25)
+    ax.bar(pos + 0.25, values2, label= label2, width=0.25)
+    ax.bar(pos + 0.5, values3, label= label3, width=0.25)
+    plt.xticks(pos + 0.25, bars)
+    ax.set_title(name, loc='center', wrap=True)
+    plt.legend()
+    fig.autofmt_xdate()
+    if os.path.exists(save_name):
+        os.remove(save_name)
+    plt.savefig(save_name)
+    print('Graph saved at ' + save_name)    
 
 def plot_bars_months(df, bar_names, bar_values, name, save_name):
     plt.close('all')

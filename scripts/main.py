@@ -34,15 +34,18 @@ data.get_average_cases_per_day_per_month_a_country('Spain').show()
 #data.get_average_data_per_day_per_month_a_country('Spain', plot = True).show()
 
 
-#economicData = economicData.EconomicData(spark)
+#processData = processData.ProcessData(spark)
 #df = get_economic_data_per_country('Spain')
 #df = get_economic_indicator_per_country('Spain', 'gdp_per_capita')
 #df = get_countries_with_highest_economic_indicator(10, 'gdp_per_capita')
 #df = get_countries_with_lowest_economic_indicator(10, 'gdp_per_capita')
 #df = get_economic_indicator_by_continent('gdp_per_capita')
 #df = get_economic_data_by_continent()
+
+#df = processData.get_countries_with_highest_indicator_per_continent(10,'gdp_per_capita', plot=True)
 #df.coalesce(1).write.save(path='./output', format='csv', mode='append', sep='\t')
 
 data.compare_two_countries_a_period_of_time('Spain', 'Portugal', plot = True, relative = True, smoothed=True).show()
 #data.compare_two_countries_a_month_daily(11, 'Italy', 'United Kingdom', plot = True)
 #data.compare_two_countries_all_months_aggregated('Canada', 'South Korea', relative = True, plot = True).show()
+
