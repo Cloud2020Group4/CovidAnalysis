@@ -43,5 +43,6 @@ data.get_average_cases_per_day_per_month_a_country('Spain').show()
 #df = get_economic_data_by_continent()
 #df.coalesce(1).write.save(path='./output', format='csv', mode='append', sep='\t')
 
-#data.compare_two_countries_a_period_of_time('Spain', 'Portugal', plot = True, relative = True, smoothed=True).show()
-data.compare_two_countries_a_month_daily(11, 'Italy', 'United Kingdom', plot = True)
+data.compare_two_countries_a_period_of_time('Spain', 'Portugal', plot = True, relative = True, smoothed=True).show()
+#data.compare_two_countries_a_month_daily(11, 'Italy', 'United Kingdom', plot = True)
+#data.compare_two_countries_all_months_aggregated('Canada', 'South Korea', relative = True, plot = True).show()
