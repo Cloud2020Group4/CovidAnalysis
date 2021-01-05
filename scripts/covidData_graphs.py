@@ -1,6 +1,8 @@
 import covidData, utils
+
+# For being able to use external python libraries, set [export PYSPARK_PYTHON='/usr/bin/python']
+# Also you have to install the library before (pip install <library>)
 import matplotlib.pyplot as plt
-import matplotlib.figure as fig
 import numpy as np
 
 def plot_dataframe_with_date(df, columnX, columnY, name, save_name, xlabel = None, ylabel = None):
@@ -16,6 +18,7 @@ def plot_dataframe_with_date(df, columnX, columnY, name, save_name, xlabel = Non
     if ylabel != None:
         ax.set_ylabel(ylabel)
     plt.savefig(save_name)
+    print('Graph saved at ' + save_name)
 
 def plot_dataframe_with_date_double(df, columnX, columnY1, columnY2, name, save_name, label1, label2, xlabel = None, ylabel = None):
     plt.close('all')
@@ -33,6 +36,7 @@ def plot_dataframe_with_date_double(df, columnX, columnY1, columnY2, name, save_
     if ylabel != None:
         ax.set_ylabel(ylabel)
     plt.savefig(save_name)
+    print('Graph saved at ' + save_name)
 
 def plot_bars(df, bar_names, bar_values, name, save_name):
     plt.close('all')
@@ -45,6 +49,7 @@ def plot_bars(df, bar_names, bar_values, name, save_name):
     ax.set_title(name)
     fig.autofmt_xdate()
     plt.savefig(save_name)
+    print('Graph saved at ' + save_name)
 
 def plot_bars_months(df, bar_names, bar_values, name, save_name):
     plt.close('all')
@@ -57,6 +62,7 @@ def plot_bars_months(df, bar_names, bar_values, name, save_name):
     ax.set_title(name)
     fig.autofmt_xdate()
     plt.savefig(save_name)
+    print('Graph saved at ' + save_name)
 
 def plot_bars_months_double(df, bar_names, bar_values1, bar_values2, name, save_name, label1, label2):
     plt.close('all')
@@ -72,3 +78,14 @@ def plot_bars_months_double(df, bar_names, bar_values1, bar_values2, name, save_
     fig.autofmt_xdate()
     plt.legend()
     plt.savefig(save_name)
+    print('Graph saved at ' + save_name)
+
+def plot_pie(df, labels, values, name, save_name):
+    plt.close('all')
+    labels_list = [row[0] for row in df.select(labels).collect()]
+    values_list = [row[0] for row in df.select(values).collect()]
+    plt.pie(values_list, labels = labels_list, startangle=90, autopct='%.2f')
+    plt.axis('equal')
+    plt.title(name)
+    plt.savefig(save_name)
+    print('Graph saved at ' + save_name)

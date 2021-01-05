@@ -4,200 +4,326 @@ Module for general Covid Data Processing
 Atributes:
    - spark: current SparkSession
    - df_covid_data: dataframe with data from the file 'owid-covid-data.csv'
-   - df_world_region: dataframe with data from the file 'countries.csv'
+   - dir: parent of the directory where the script is saved 
 
 Methods:
     Various methods that select some specific data and return them as a dataframe.
-    Each method has a commet that explains its purpose.
+    Each method has a comment that explains its purpose.
+
+    Functions summary:
+
+    1. Data in a specific date
+        1.1. For all countries: get_data_a_date_all_countries
+        1.2. For only a country: get_data_a_date_a_country
+    2. Data during each day in a period of time
+        2.1. For only a country during any period of time: get_data_a_country_a_period_of_time [INCLUDES PLOT: Line]
+        2.2. For all countries during each day in a month: get_data_a_month_daily_all_countries
+        2.3. For only a country during each day in a month: get_data_a_month_daily_a_country [INCLUDES PLOT: Line]
+    3. Total data during a period of time
+        3.1. Aggregated total data during a month for all countries: get_data_a_month_total_all_countries
+            3.1.1. Top countries with more cases: get_countries_with_more_cases_a_month    [INCLUDES PLOT: Bars]
+            3.1.2. Top countries with less cases: get_countries_with_less_cases_a_month    [INCLUDES PLOT: Bars]
+            3.1.3. Top countries with more deaths: get_countries_with_more_deaths_a_month  [INCLUDES PLOT: Bars]
+            3.1.4. Top countries with less deaths: get_countries_with_less_deaths_a_month  [INCLUDES PLOT: Bars]
+        3.2. Total data until a specific date
+            3.2.1. Top countries with more cases until a date: get_countries_with_more_cases_until_a_date   [INCLUDES PLOT: Bars]
+            3.2.2. Top countries with less cases until a date: get_countries_with_less_cases_until_a_date   [INCLUDES PLOT: Bars]
+            3.2.3. Top countries with more deaths until a date: get_countries_with_more_deaths_until_a_date [INCLUDES PLOT: Bars]
+            3.2.4. Top countries with less deaths until a date: get_countries_with_less_deaths_until_a_date [INCLUDES PLOT: Bars]
+    4. Aggregated data per month:
+        4.1. For a country: get_data_aggregate_a_country_all_months [INCLUDES PLOT: Bars]
+    5. Data per continent:
+        5.1. Total data during a month: get_total_data_a_month_per_continent    [INCLUDES PLOT: Pie]
+        5.2. Total data until a date: get_total_data_until_a_date_per_continent [INCLUDES PLOT: Pie]
+
+    AUXILIARY FUNCTIONS
+        1. Get top countries: get_top_countries
 '''
-from pyspark.sql.functions import month, desc
+from pyspark.sql.functions import month, desc, asc
 import covidData_graphs
 import utils
+
+# For being able to use external python libraries, set [export PYSPARK_PYTHON='/usr/bin/python']
+# Also you have to install the library before (pip install <library>)
 from os.path import dirname, abspath
 
 class CovidData:
-    # the function receives a SparkSession and initializes the dataframes needed
+    # [Constructor] the function receives a SparkSession and initializes the dataframe needed
     def __init__(self, sparkSes):
         self.spark = sparkSes
         self.dir = dirname(dirname(abspath(__file__)))
         self.df_covid_data = self.spark.read.csv(self.dir + '/datasets/owid-covid-data.csv', header = True, inferSchema=True)
-        self.df_world_region = self.spark.read.csv(self.dir + '/datasets/countries.csv')
 
-    # Given a date and a country returns the number of new cases and new deaths in that day and that country
-    def get_data_a_country_a_date(self, date, country):
-        df = self.df_covid_data.dropna(subset =('location', 'date', 'new_cases', 'new_deaths'))
-        return (df.filter((df['date'] == date) & (df['location'] == country))
-                .select('location', 'date','new_cases','new_dates'))
+    # [1.1] Given a date returns the data in that day for all countries (including World)
+
+    def get_data_a_date_all_countries(self, date, smoothed = False, totals = False, relative = False):
+        cases, deaths, cases_text, deaths_text = utils.get_correct_columns(smoothed, totals, relative)
+        df = self.df_covid_data.dropna(subset =('location', 'date', cases, deaths))
+        return (df.filter(df['date'] == date).select('location', 'date', cases, deaths))
+
+    # [1.2] Given a date and a country returns the data in that day for that country (country can be World)
+
+    def get_data_a_date_a_country(self, date, country, smoothed = False, totals = False, relative = False):
+        cases, deaths, cases_text, deaths_text = utils.get_correct_columns(smoothed, totals, relative)
+        df = self.get_data_a_date_all_countries(date, smoothed, totals, relative)
+        return df.filter(df['location'] == country)
+
     
-    # Given two dates and a country returns the daily cases and deaths during that period of time in
-    # the given country
-    def get_data_a_country_a_period_of_time(self, date1, date2, country, plot = False):
-        df = self.df_covid_data.dropna(subset =('location', 'date', 'new_cases', 'new_deaths'))
-        df = (df.filter(self.df_covid_data['location'] == country)
-                .filter((df['date'] <= date2) & (df['date'] >= date1))
-                .select('location', 'date', 'new_cases', 'new_deaths'))
+    # [2.1] Given a country returns the data for all dates included in the dataset, with the option of limiting the period of time considered 
+    # by providing a loewr-bound date, an upper bound one or bith of them
+    def get_data_a_country_a_period_of_time(self, country, date_ini = None, date_fin = None, plot = False, smoothed = False, totals = False, relative = False):
+        cases, deaths, cases_text, deaths_text = utils.get_correct_columns(smoothed, totals, relative)
+        df = self.df_covid_data.dropna(subset =('location', 'date', cases, deaths))
+        df = df.filter(df['location'] == country).select('location', 'date', cases, deaths)
+        end_text_file = ''
+        end_text = ''
+        if (date_ini != None):
+            df = df.filter(df['date'] >= date_ini)
+            end_text_file = end_text_file + '_from_' + date_ini
+            end_text = end_text + ' from ' + date_ini
+        if(date_fin != None):
+            df = df.filter((df['date'] <= date_fin))
+            end_text_file = end_text_file + '_to_' + date_fin
+            end_text = end_text + ' to ' + date_fin
+            
         if plot:
             # Plot new cases
-            save_name = self.dir +'/graphs/'+'new_cases_' + country + '_from_' + date1 + '_to_' + date2 + '.png'
-            title = 'Daily Cases in ' + country + ' between ' + date1 + ' and ' + date2
-            covidData_graphs.plot_dataframe_with_date(df, 'date', 'new_cases', title, save_name, ylabel = 'New Covid-19 Cases')
+            save_name = self.dir +'/graphs/'+ cases + '_' + country + '_all_dates' + end_text_file + '.png'
+            title = 'Daily ' + cases_text + ' in ' + country + end_text
+            covidData_graphs.plot_dataframe_with_date(df, 'date', cases, title, save_name, ylabel = cases_text)
 
             # Plot new deaths
-            save_name = self.dir + '/graphs/' +'new_deaths_' + country + '_from_' + date1 + '_to_' + date2 + '.png'
-            title = 'Daily Deaths in ' + country + ' between ' + date1 + ' and ' + date2
-            covidData_graphs.plot_dataframe_with_date(df, 'date', 'new_deaths', title, save_name, ylabel = 'New Deaths for Covid-19')
+            save_name = self.dir + '/graphs/' + deaths + '_' + country + '_all_dates' + end_text_file + '.png'
+            title = 'Daily ' + deaths_text + ' in ' + country + end_text
+            covidData_graphs.plot_dataframe_with_date(df, 'date', deaths, title, save_name, ylabel = deaths_text)
 
             # Plot both things
 
-            save_name = self.dir + '/graphs/'+'new_deaths_and_cases_' + country + '_from_' + date1 + '_to_' + date2 + '.png'
-            title = 'Daily Deaths and Cases in ' + country + ' between ' + date1 + ' and ' + date2
-            covidData_graphs.plot_dataframe_with_date_double(df, 'date', 'new_cases', 'new_deaths', title, save_name, 'New Cases', 'New Deaths')
+            save_name = self.dir + '/graphs/'+ cases + '_and_' + deaths+ '_in_' + country + '_all_dates' + end_text_file + '.png'
+            title = 'Daily '+ cases_text+ ' and ' + deaths_text + ' in ' + country + end_text
+            covidData_graphs.plot_dataframe_with_date_double(df, 'date', cases, deaths, title, save_name, cases_text, deaths_text)
 
         return df
 
-    # Given a month returns the cases and deaths each day in that month for each country
-    def get_data_a_month_per_country(self, this_month):
-        df = self.df_covid_data.dropna(subset = ('location', 'date', 'new_cases', 'new_deaths'))
-        df = df.select('location', 'date', 'new_cases', 'new_deaths', month('date').alias('month'))
-        return (df.filter(df['month'] == this_month)
-                .select('location', 'date', 'new_cases', 'new_deaths'))
+    # [2.2] Given a month returns the cases and deaths each day in that month for each country
+    def get_data_a_month_daily_all_countries(self, this_month, smoothed = False, totals = False, relative = False):
+        cases, deaths, _ , _ = utils.get_correct_columns(smoothed, totals, relative)
+        df = self.df_covid_data.dropna(subset = ('location', 'date', cases, deaths))
+        df = df.select('location', 'date', cases, deaths, month('date').alias('month'))
+        return (df.filter(df['month'] == this_month).select('location', 'date', cases, deaths))
 
-    # Same that the previous one but returns data for only a specified country
-    def get_data_a_month_a_country(self, this_month, country, plot = False):
-        df = self.get_data_a_month_per_country(this_month)
+    # [2.3] Same that the previous one but returns data for only a specified country
+    def get_data_a_month_daily_a_country(self, this_month, country, plot = False, smoothed = False, totals = False, relative = False):
+        cases, deaths, cases_text, deaths_text = utils.get_correct_columns(smoothed, totals, relative)
+        df = self.get_data_a_month_daily_all_countries(this_month, smoothed = smoothed, totals = totals, relative = relative)
         df = df.filter(df['location'] == country)
         if plot:
             month_str = utils.month_string(this_month)
             # Plot new cases
-            save_name = self.dir + '/graphs/'+'new_cases_' + country + '_' + month_str + '.png'
-            title = 'Daily Cases in ' + country + ' in ' + month_str
-            covidData_graphs.plot_dataframe_with_date(df, 'date', 'new_cases', title, save_name, ylabel = 'New Covid-19 Cases')
+            save_name = self.dir + '/graphs/'+ cases + '_' + country + '_' + month_str + '.png'
+            title = 'Daily ' + cases_text + ' in ' + country + ' in ' + month_str
+            covidData_graphs.plot_dataframe_with_date(df, 'date', cases, title, save_name, ylabel = cases_text)
 
             # Plot new deaths
-            save_name = self.dir + '/graphs/'+'new_deaths_' + country + '_' + month_str + '.png'
-            title = 'Daily Deaths in ' + country + ' in ' + month_str
-            covidData_graphs.plot_dataframe_with_date(df, 'date', 'new_deaths', title, save_name, ylabel = 'New Covid-19 Deaths')
+            save_name = self.dir + '/graphs/' + deaths +'_' + country + '_' + month_str + '.png'
+            title = 'Daily ' + deaths_text + ' in '  + country + ' in ' + month_str
+            covidData_graphs.plot_dataframe_with_date(df, 'date', deaths, title, save_name, ylabel = deaths_text)
 
             # Plot both things
-
-            save_name = self.dir + '/graphs/'+'new_deaths_and_cases_' + country + '_' + month_str + '.png'
-            title = 'Daily Deaths and Cases in ' + country + ' in ' + month_str
-            covidData_graphs.plot_dataframe_with_date_double(df, 'date', 'new_cases', 'new_deaths', title, save_name, 'New Cases', 'New Deaths')
+            save_name = self.dir + '/graphs/'+ cases + '_and_' + deaths + '_' + country + '_' + month_str + '.png'
+            title = 'Daily ' + cases_text + ' and ' + deaths_text + ' in ' + country + ' in ' + month_str
+            covidData_graphs.plot_dataframe_with_date_double(df, 'date', cases, deaths, title, save_name, cases_text, deaths_text)
         
         return df
 
-    # Given a month returns the total number of cases that month in each country
-    def get_data_totals_a_month_per_country(self, this_month):
-        return (self.get_data_a_month_per_country(this_month)
-                .select('location', 'new_cases', 'new_deaths')
-                .groupBy('location').agg({'new_cases': 'sum', 'new_deaths' : 'sum'}))
-
-    # Returns the 'num_countries' countries with more new cases in the month 'this_month'
-    def get_countries_with_more_cases_a_month(self, this_month, num_countries, plot = False):
-        df = (self.get_data_totals_a_month_per_country(this_month)
-                    .select('location', 'sum(new_cases)')
-                    .sort(desc('sum(new_cases)')))
-        df = (df.filter((df['location'] != 'World') & (df['location'] != 'International'))
-                    .limit(num_countries))
-        if plot:
-            if num_countries > 15:
-                print("To many countries to print!")
-            else:
-                month_str = utils.month_string(this_month)
-                save_name = self.dir + '/graphs/'+'top_'+ str(num_countries) + '_more_cases_' + month_str + '.png'
-                title = 'Countries with more cases in ' + month_str
-                covidData_graphs.plot_bars(df, 'location', 'sum(new_cases)', title, save_name)
-
-        return df
-
-    # Returns the 'num_countries' countries with less new cases in the month 'this_month'    
-    def get_countries_with_less_cases_a_month(self, this_month, num_countries):
-        df = (self.get_data_totals_a_month_per_country(this_month)
-                    .select('location', 'sum(new_cases)')
-                    .sort(('sum(new_cases)')))
-        df = (df.filter((df['location'] != 'World') & (df['location'] != 'International'))
-                    .limit(num_countries))
-        if plot:
-            if num_countries > 15:
-                print("To many countries to plot!")
-            else:
-                month_str = utils.month_string(this_month)
-                save_name = self.dir + '/graphs/'+'top_'+ str(num_countries) + '_less_cases_' + month_str + '.png'
-                title = 'Countries with less cases in ' + month_str
-                covidData_graphs.plot_bars(df, 'location', 'sum(new_cases)', title, save_name)
-
-        return df
-
-    # Returns the 'num_countries' countries with more new deaths in the month 'this_month'
-    def get_countries_with_more_deaths_a_month(self, this_month, num_countries, plot = False):
-        df = (self.get_data_totals_a_month_per_country(this_month)
-                    .select('location', 'sum(new_deaths)')
-                    .sort(desc('sum(new_deaths)')))
-        df = (df.filter((df['location'] != 'World') & (df['location'] != 'International'))
-                    .limit(num_countries))
-        if plot:
-            if num_countries > 15:
-                print("To many countries to plot!")
-            else:
-                month_str = utils.month_string(this_month)
-                save_name = self.dir + '/graphs/'+'top_'+ str(num_countries) + '_more_deaths_' + month_str + '.png'
-                title = 'Countries with more deaths in ' + month_str
-                covidData_graphs.plot_bars(df, 'location', 'sum(new_deaths)', title, save_name)
-
-        return df
-
-    # Returns the 'num_countries' countries with less new deaths in the month 'this_month'    
-    def get_countries_with_less_deaths_a_month(self, this_month, num_countries):
-        df = (self.get_data_totals_a_month_per_country(this_month)
-                    .select('location', 'sum(new_deaths)')
-                    .sort(('sum(new_deaths)')))
-        df = (df.filter((df['location'] != 'World') & (df['location'] != 'International'))
-                    .limit(num_countries))
-        if plot:
-            if num_countries > 15:
-                print("To many countries to plot!")
-            else:
-                month_str = utils.month_string(this_month)
-                save_name = self.dir + '/graphs/'+'top_'+ str(num_countries) + '_less_deaths_' + month_str + '.png'
-                title = 'Countries with less detahs in ' + month_str
-                covidData_graphs.plot_bars(df, 'location', 'sum(new_deaths)', title, save_name)
-
-        return df
-
-    # Returns the avaerage cases per day in a month for each country
-    def get_average_data_per_day_a_month_per_country(self, this_month):
-        df_aux = self.df_covid_data.select('location', 'new_cases', 'new_deaths', month('date').alias('month'))
-        return (df_aux.filter(df_aux['month'] == this_month)
-                .groupBy('month', 'location').agg({'new_cases': 'avg', 'new_deaths': 'avg'}))
+    # [3.1] Given a month returns the total number of cases that month in each country
+    def get_data_a_month_total_all_countries(self, this_month, avg = False, relative = False):
+        cases, deaths, cases_text, deaths_text = utils.get_correct_columns(False, False, relative)
+        if avg:
+            aggregate = 'avg'
+        else:
+            aggregate = 'sum' 
+        return (self.get_data_a_month_daily_all_countries(this_month, relative=relative)
+                .select('location', cases, deaths)
+                .groupBy('location').agg({cases: aggregate, deaths : aggregate}))
 
 
-    # Returns the average cases per day each month for a specified country
-    def get_average_data_per_day_per_month_a_country(self, country, plot = False):
-        df = self.df_covid_data.dropna(subset = ('location', 'date', 'new_cases', 'new_deaths'))
-        df = df.select('location', 'new_cases', 'new_deaths', month('date').alias('month'))
+    # [3.1.1] Returns the 'num_countries' countries with more new cases in the month 'this_month'
+    def get_countries_with_more_cases_a_month(self, this_month, num_countries, plot = False, relative = False):
+        cases, deaths, cases_text, deaths_text = utils.get_correct_columns(False, False, relative)
+        sum_cases = 'sum(' + cases + ')'
+        df = self.get_data_a_month_total_all_countries(this_month, relative = relative)
+        month_str = utils.month_string(this_month)
+        return self.get_top_countries(df, sum_cases, cases, cases_text, num_countries, desc, plot, month_str, 'in ' + month_str)
+
+    # [3.1.2] Returns the 'num_countries' countries with less new cases in the month 'this_month'    
+    def get_countries_with_less_cases_a_month(self, this_month, num_countries, plot = False, relative = False):
+        cases, deaths, cases_text, deaths_text = utils.get_correct_columns(False, False, relative)
+        sum_cases = 'sum(' + cases + ')'
+        df = self.get_data_a_month_total_all_countries(this_month, relative = relative)
+        month_str = utils.month_string(this_month)
+        return self.get_top_countries(df, sum_cases, cases, cases_text, num_countries, asc, plot, month_str, 'in ' + month_str)
+
+    # [3.1.3] Returns the 'num_countries' countries with more new deaths in the month 'this_month'
+    def get_countries_with_more_deaths_a_month(self, this_month, num_countries, plot = False, relative = False):
+        cases, deaths, cases_text, deaths_text = utils.get_correct_columns(False, False, relative)
+        sum_deaths = 'sum(' + deaths + ')'
+        df = self.get_data_a_month_total_all_countries(this_month, relative = relative)
+        month_str = utils.month_string(this_month)
+        return self.get_top_countries(df, sum_deaths, deaths, deaths_text, num_countries, desc, plot, month_str, 'in ' + month_str)
+
+    # [3.1.4] Returns the 'num_countries' countries with less new deaths in the month 'this_month'    
+    def get_countries_with_less_deaths_a_month(self, this_month, num_countries, plot = False, relative = False):
+        cases, deaths, cases_text, deaths_text = utils.get_correct_columns(False, False, relative)
+        sum_deaths = 'sum(' + deaths + ')'
+        df = self.get_data_a_month_total_all_countries(this_month, relative = relative)
+        month_str = utils.month_string(this_month)
+        return self.get_top_countries(df, sum_deaths, deaths, deaths_text, num_countries, asc, plot, month_str, 'in ' + month_str)
+
+
+    # [3.2.1] Returns the top 'num_countries' with more cumulative cases until a given date
+
+    def get_countries_with_more_cases_until_a_date(self, date, num_countries,plot = False, relative = False):
+        cases, deaths, cases_text, deaths_text = utils.get_correct_columns(False, True, relative)
+        df = self.get_data_a_date_all_countries(date, totals = True, relative = relative)
+        return self.get_top_countries(df, cases, cases, cases_text, num_countries, desc, plot, 'until_'+ date, 'until ' + date)
+
+    # [3.2.2] Returns the top 'num_countries' with less cumulative cases until a given date
+
+    def get_countries_with_less_cases_until_a_date(self, date, num_countries,plot = False, relative = False):
+        cases, deaths, cases_text, deaths_text = utils.get_correct_columns(False, True, relative)
+        df = self.get_data_a_date_all_countries(date, totals = True, relative = relative)
+        return self.get_top_countries(df, cases, cases, cases_text, num_countries, asc, plot, 'until_'+ date, 'until ' + date)
+
+    # [3.2.3] Returns the top 'num_countries' with more cumulative deaths until a given date
+
+    def get_countries_with_more_deaths_until_a_date(self, date, num_countries,plot = False, relative = False):
+        cases, deaths, cases_text, deaths_text = utils.get_correct_columns(False, True, relative)
+        df = self.get_data_a_date_all_countries(date, totals = True, relative = relative)
+        return self.get_top_countries(df, deaths, deaths, deaths_text, num_countries, desc, plot, 'until_'+ date, 'until ' + date)
+
+    # [3.2.4] Returns the top 'num_countries' with less cumulative deaths until a given date
+
+    def get_countries_with_less_deaths_until_a_date(self, date, num_countries,plot = False, relative = False):
+        cases, deaths, cases_text, deaths_text = utils.get_correct_columns(False, True, relative)
+        df = self.get_data_a_date_all_countries(date, totals = True, relative = relative)
+        return self.get_top_countries(df, deaths, deaths, deaths_text, num_countries, asc, plot, 'until_'+ date, 'until ' + date)
+
+
+    # [4.1] Returns the average cases per day or total cases each month for a specified country
+    def get_data_aggregate_a_country_all_months(self, country, avg = False, plot = False, relative = False):
+        cases, deaths, cases_text, deaths_text = utils.get_correct_columns(False, False, relative)
+        df = self.df_covid_data.dropna(subset = ('location', 'date', cases, deaths))
+        if avg:
+            aggregate = 'avg'
+            file_text = 'avg'
+            text = 'Average daily'
+        else:
+            aggregate = 'sum'
+            file_text = 'total'
+            text = 'Total'
+
         df = (df.filter(df['location'] == country)
-                .groupBy('month', 'location').agg({'new_cases': 'avg', 'new_deaths': 'avg'})
+                .select(cases, deaths, month('date').alias('month'))
+                .groupBy('month').agg({cases: aggregate, deaths: aggregate})
                 .sort('month'))
 
         if plot:
+            agg_cases = aggregate + '(' + cases + ')'
+            agg_deaths = aggregate + '(' + deaths + ')'
 
             # Plot new cases average per month
-            save_name = self.dir + '/graphs/'+'avg_cases_per_month_'+ country + '.png'
-            title = 'Average daily cases per month in ' + country
-            covidData_graphs.plot_bars_months(df, 'month', 'avg(new_cases)', title, save_name)
+            save_name = self.dir + '/graphs/'+ file_text + '_' + cases + '_per_month_'+ country + '.png'
+            title = text + ' ' + cases_text + ' per month in ' + country
+            covidData_graphs.plot_bars_months(df, 'month', agg_cases, title, save_name)
 
             # Plot new deaths average per month
-            save_name = self.dir + '/graphs/'+'avg_deaths_per_month_'+ country + '.png'
-            title = 'Average daily deaths per month in ' + country
-            covidData_graphs.plot_bars_months(df, 'month', 'avg(new_deaths)', title, save_name)
+            save_name = self.dir + '/graphs/'+ file_text + '_' + deaths + '_per_month_'+ country + '.png'
+            title = text + ' '+ deaths_text + ' per month in ' + country
+            covidData_graphs.plot_bars_months(df, 'month', agg_deaths, title, save_name)
 
             # Plot both things
-
-            save_name = self.dir + '/graphs/'+'avg_deaths_and_cases_per_month_'+ country + '.png'
-            title = 'Average daily deaths and cases per month in ' + country
-            covidData_graphs.plot_bars_months_double(df, 'month', 'avg(new_cases)','avg(new_deaths)', title, save_name, 'Average cases per day', 'Average deaths per day')
+            save_name = self.dir + '/graphs/'+ file_text + '_' + deaths + '_and_' + cases + '_per_month_'+ country + '.png'
+            title = text + ' ' + cases_text + ' and ' + deaths_text + ' per month in ' + country
+            covidData_graphs.plot_bars_months_double(df, 'month', agg_cases,agg_deaths, title, save_name, text + ' ' + cases_text , text + ' ' + deaths_text )
         
         return df
+
+    # [5.1] Returns the total data a month per continent
+
+    def get_total_data_a_month_per_continent(self, this_month, plot = False):
+        df = self.df_covid_data.dropna(subset=('location', 'continent', 'date', 'new_cases', 'new_deaths'))
+        df = df.select('continent','new_cases', 'new_deaths', month('date').alias('month'))
+        df = (df.filter(df['month'] == this_month)
+                .groupBy('continent').agg({'new_cases': 'sum', 'new_deaths': 'sum'}))
+
+        if plot:
+
+            month_str = utils.month_string(this_month)
+
+            # Plot distribution of new cases in that month
+
+            save_name = self.dir + '/graphs/'+'new_cases_per_continent_'+ month_str + '.png'
+            title = 'Distribution of new Cases in ' + month_str
+            covidData_graphs.plot_pie(df, 'continent', 'sum(new_cases)', title, save_name)
+
+            # Plot distribution of new deaths in that month
+
+            save_name = self.dir + '/graphs/'+'new_deaths_per_continent_'+ month_str + '.png'
+            title = 'Distribution of new deaths in ' + month_str
+            covidData_graphs.plot_pie(df, 'continent', 'sum(new_deaths)', title, save_name)
+
+        return df
+
+
+
+     # [5.2] Returns the total data until a date per continent
+
+    def get_total_data_until_a_date_per_continent(self, date, plot = False):
+        df = self.df_covid_data.dropna(subset=('location','continent', 'date', 'total_cases', 'total_deaths'))
+        df = (df.filter(df['date'] == date)
+                .select('continent', 'total_deaths', 'total_cases')
+                .groupBy('continent').agg({'total_deaths': 'sum', 'total_cases': 'sum'}))
+
+        if plot:
+            # Plot distribution of new cases in until that date
+
+            save_name = self.dir + '/graphs/'+'total_cases_per_continent_until_'+ date + '.png'
+            title = 'Distribution of total cases until ' + date
+            covidData_graphs.plot_pie(df, 'continent', 'sum(total_cases)', title, save_name)
+
+            # Plot distribution of new deaths in that month
+
+            save_name = self.dir + '/graphs/'+'total_deaths_per_continent_until'+ date + '.png'
+            title = 'Distribution of total deaths until ' + date
+            covidData_graphs.plot_pie(df, 'continent', 'sum(total_deaths)', title, save_name)
+
+        return df
+
+    def get_top_countries(self, df, indicator, indicator_file, indicator_text, num_countries ,ordering, plot, file_end_text, end_text):
+        if ordering == asc:
+            word= 'less'
+        else:
+            word = 'more'
+        df = (df.select('location', indicator)
+                .sort(ordering(indicator))
+                .filter((df['location'] != 'World') & (df['location'] != 'International'))
+                .limit(num_countries))
+        if plot:
+            if num_countries > 15:
+                print("To many countries to plot!")
+
+            else:
+                save_name = self.dir + '/graphs/'+'top_'+ str(num_countries) + '_' + word + '_' + indicator_file + '_' + file_end_text + '.png'
+                title = 'Countries with ' + word + ' ' + indicator_text + ' ' + end_text
+                covidData_graphs.plot_bars(df, 'location', indicator, title, save_name)
+        return df
+
+            
+
+
+
+
 
 
     
