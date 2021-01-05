@@ -35,11 +35,15 @@ Methods:
     5. Data per continent:
         5.1. Total data during a month: get_total_data_a_month_per_continent    [INCLUDES PLOT: Pie]
         5.2. Total data until a date: get_total_data_until_a_date_per_continent [INCLUDES PLOT: Pie]
+    6. Compare data for two countries
+        6.1. Compare data during any period of time for each day [INCLUDES PLOT : Line]
+        6.2. Compare data during ecah day of a month [INCLUDES PLOT : Line]
 
     AUXILIARY FUNCTIONS
         1. Get top countries: get_top_countries
 '''
 from pyspark.sql.functions import month, desc, asc
+import pyspark.sql.functions as f
 import covidData_graphs
 import utils
 
@@ -300,6 +304,69 @@ class CovidData:
 
         return df
 
+    def compare_two_countries_a_period_of_time(self, country1, country2, date_ini = None, date_fin = None, plot = False, smoothed = False, totals = False, relative = False):
+        cases, deaths, cases_text, deaths_text = utils.get_correct_columns(smoothed, totals, relative)
+        df1 = self.get_data_a_country_a_period_of_time(country1, date_ini=date_ini, date_fin = date_fin, smoothed = smoothed, totals = totals, relative = relative)
+        df2 = self.get_data_a_country_a_period_of_time(country2, date_ini=date_ini, date_fin = date_fin, smoothed = smoothed, totals = totals, relative = relative)
+        date_ini = max(df1.select('date').agg(f.min('date')).collect()[0][0], df2.select('date').agg(f.min('date')).collect()[0][0])
+        date_fin = min(df1.select('date').agg(f.max('date')).collect()[0][0], df2.select('date').agg(f.max('date')).collect()[0][0])
+        df1 = df1.filter((df1['date'] <= date_fin) & (df1['date'] >= date_ini))
+        df2 = df2.filter((df2['date'] <= date_fin) & (df2['date'] >= date_ini))
+        df1 = (df1.withColumnRenamed('location', 'location_1')
+                .withColumnRenamed('date', 'date_1')
+                .withColumnRenamed(cases, cases + '_1')
+                .withColumnRenamed(deaths, deaths + '_1'))
+        df2 = (df2.withColumnRenamed('location', 'location_2')
+                .withColumnRenamed('date', 'date_2')
+                .withColumnRenamed(cases, cases + '_2')
+                .withColumnRenamed(deaths, deaths + '_2'))
+        df = df1.join(df2, df1.date_1 == df2.date_2)
+        if plot:
+            date_ini_str = date_ini.strftime("%Y-%m-%d")
+            date_fin_str = date_fin.strftime("%Y-%m-%d")
+            # Plot cases
+            save_name = self.dir + '/graphs/'+'compare_'+ cases + '_' + country1 + '_vs_' + country2 + '_from_' + date_ini_str + '_to_' + date_fin_str + '.png'
+            title = cases_text+ ' ' + country1 + ' vs ' + country2 + ' from ' + date_ini_str + ' to ' + date_fin_str
+            covidData_graphs.plot_dataframe_with_date_double(df, 'date_1', cases + '_1', cases + '_2', title, save_name, cases_text + ' in ' + country1, cases_text + ' in ' + country2)
+
+            # Plot deaths
+            save_name = self.dir + '/graphs/'+'compare_'+ deaths + '_' + country1 + '_vs_' + country2 + '_from_' + date_ini_str + '_to_' + date_fin_str + '.png'
+            title = deaths_text + ' ' + country1 + ' vs ' + country2 + ' from ' + date_ini_str + ' to ' + date_fin_str
+            covidData_graphs.plot_dataframe_with_date_double(df, 'date_1', deaths + '_1', deaths + '_2', title, save_name, deaths_text + ' in ' + country1, deaths_text + ' in ' + country2)
+        return df
+
+    def compare_two_countries_a_month_daily(self, this_month, country1, country2, plot = False, smoothed = False, totals = False, relative = False):
+        cases, deaths, cases_text, deaths_text = utils.get_correct_columns(smoothed, totals, relative)
+        df1 = self.get_data_a_month_daily_a_country(this_month, country1,smoothed = smoothed, totals = totals, relative =relative)
+        df2 = self.get_data_a_month_daily_a_country(this_month, country1,smoothed = smoothed, totals = totals, relative =relative)
+        date_ini = max(df1.select('date').agg(f.min('date')).collect()[0][0], df2.select('date').agg(f.min('date')).collect()[0][0])
+        date_fin = min(df1.select('date').agg(f.max('date')).collect()[0][0], df2.select('date').agg(f.max('date')).collect()[0][0])
+        df1 = df1.filter((df1['date'] <= date_fin) & (df1['date'] >= date_ini))
+        df2 = df2.filter((df2['date'] <= date_fin) & (df2['date'] >= date_ini))
+        df1 = (df1.withColumnRenamed('location', 'location_1')
+                .withColumnRenamed('date', 'date_1')
+                .withColumnRenamed(cases, cases + '_1')
+                .withColumnRenamed(deaths, deaths + '_1'))
+        df2 = (df2.withColumnRenamed('location', 'location_2')
+                .withColumnRenamed('date', 'date_2')
+                .withColumnRenamed(cases, cases + '_2')
+                .withColumnRenamed(deaths, deaths + '_2'))
+        df = df1.join(df2, df1.date_1 == df2.date_2)
+        if plot:
+            # Plot cases
+            save_name = self.dir + '/graphs/'+'compare_'+ cases + '_' + country1 + '_vs_' + country2 + '_' + this_month + '.png'
+            title = cases_text + ' ' + country1 + ' vs ' + country2 + ' in ' + this_month
+            covidData_graphs.plot_dataframe_with_date_double(df, 'date_1', cases + '_1', cases + '_2', title, save_name, cases_text + ' in ' + country1, cases_text + ' in ' + country2)
+
+            # Plot deaths
+            save_name = self.dir + '/graphs/'+'compare_'+ deaths + '_' + country1 + '_vs_' + country2 + '_' + this_month + '.png'
+            title = deaths_text + ' ' + country1 + ' vs ' + country2 + ' in ' + this_month
+            covidData_graphs.plot_dataframe_with_date_double(df, 'date_1', deaths + '_1', deaths + '_2', title, save_name, deaths_text + ' in ' + country1, deaths_text + ' in ' + country2)
+        return df
+
+
+        
+    # [AUX 1]
     def get_top_countries(self, df, indicator, indicator_file, indicator_text, num_countries ,ordering, plot, file_end_text, end_text):
         if ordering == asc:
             word= 'less'

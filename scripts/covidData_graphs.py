@@ -4,6 +4,7 @@ import covidData, utils
 # Also you have to install the library before (pip install <library>)
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
 def plot_dataframe_with_date(df, columnX, columnY, name, save_name, xlabel = None, ylabel = None):
     plt.close('all')
@@ -12,11 +13,13 @@ def plot_dataframe_with_date(df, columnX, columnY, name, save_name, xlabel = Non
     fig, ax = plt.subplots()
     ax.plot(x_values, y_values)
     fig.autofmt_xdate()
-    ax.set_title(name)
+    ax.set_title(name, loc='center', wrap=True)
     if xlabel != None:
         ax.set_xlabel(xlabel)
     if ylabel != None:
         ax.set_ylabel(ylabel)
+    if os.path.exists(save_name):
+        os.remove(save_name)
     plt.savefig(save_name)
     print('Graph saved at ' + save_name)
 
@@ -30,11 +33,13 @@ def plot_dataframe_with_date_double(df, columnX, columnY1, columnY2, name, save_
     ax.plot(x_values, y2_values, label = label2)
     plt.legend()
     fig.autofmt_xdate()
-    ax.set_title(name)
+    ax.set_title(name, loc='center', wrap=True)
     if xlabel != None:
         ax.set_xlabel(xlabel)
     if ylabel != None:
         ax.set_ylabel(ylabel)
+    if os.path.exists(save_name):
+        os.remove(save_name)
     plt.savefig(save_name)
     print('Graph saved at ' + save_name)
 
@@ -46,8 +51,10 @@ def plot_bars(df, bar_names, bar_values, name, save_name):
     pos = np.arange(len(bars))
     ax.bar(pos, values)
     plt.xticks(pos, bars)
-    ax.set_title(name)
+    ax.set_title(name, loc='center', wrap=True)
     fig.autofmt_xdate()
+    if os.path.exists(save_name):
+        os.remove(save_name)
     plt.savefig(save_name)
     print('Graph saved at ' + save_name)
 
@@ -59,8 +66,10 @@ def plot_bars_months(df, bar_names, bar_values, name, save_name):
     pos = np.arange(len(bars))
     ax.bar(pos, values)
     plt.xticks(pos, bars)
-    ax.set_title(name)
+    ax.set_title(name, loc='center', wrap=True)
     fig.autofmt_xdate()
+    if os.path.exists(save_name):
+        os.remove(save_name)
     plt.savefig(save_name)
     print('Graph saved at ' + save_name)
 
@@ -74,9 +83,11 @@ def plot_bars_months_double(df, bar_names, bar_values1, bar_values2, name, save_
     ax.bar(pos, values1, label = label1, width=0.4)
     ax.bar(pos + 0.4, values2, label= label2, width=0.4)
     plt.xticks(pos + 0.2, bars)
-    ax.set_title(name)
+    ax.set_title(name, loc='center', wrap=True)
     fig.autofmt_xdate()
     plt.legend()
+    if os.path.exists(save_name):
+        os.remove(save_name)
     plt.savefig(save_name)
     print('Graph saved at ' + save_name)
 
@@ -86,6 +97,8 @@ def plot_pie(df, labels, values, name, save_name):
     values_list = [row[0] for row in df.select(values).collect()]
     plt.pie(values_list, labels = labels_list, startangle=90, autopct='%.2f')
     plt.axis('equal')
-    plt.title(name)
+    plt.title(name, loc='center', wrap=True)
+    if os.path.exists(save_name):
+        os.remove(save_name)
     plt.savefig(save_name)
     print('Graph saved at ' + save_name)

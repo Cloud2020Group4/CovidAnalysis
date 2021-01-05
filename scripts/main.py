@@ -31,7 +31,7 @@ data.get_average_cases_per_day_per_month_a_country('Spain').show()
 #data.get_countries_with_more_deaths_a_month(7, 15, plot = True).show()
 #data.get_data_a_month_a_country(7, 'Spain', plot = True).show()
 
-data.get_average_data_per_day_per_month_a_country('Spain', plot = True).show()
+#data.get_average_data_per_day_per_month_a_country('Spain', plot = True).show()
 
 
 #economicData = economicData.EconomicData(spark)
@@ -42,15 +42,6 @@ data.get_average_data_per_day_per_month_a_country('Spain', plot = True).show()
 #df = get_economic_indicator_by_continent('gdp_per_capita')
 #df = get_economic_data_by_continent()
 #df.coalesce(1).write.save(path='./output', format='csv', mode='append', sep='\t')
-© 2021 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Help
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
+
+#data.compare_two_countries_a_period_of_time('Spain', 'Portugal', plot = True, relative = True, smoothed=True).show()
+data.compare_two_countries_a_month_daily(11, 'Italy', 'United Kingdom', plot = True)
