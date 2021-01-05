@@ -66,3 +66,25 @@ def get_correct_columns(smoothed, totals, relative):
                 deaths = 'new_deaths'
                 deaths_text = 'New Deaths'
     return cases, deaths, cases_text, deaths_text
+
+
+def get_column_natural_name(column):
+    sw = {
+        'stringency_index': 'Stringency index',
+        'population': 'Population',
+        'population_density':'Population density',
+        'median_age': 'Median age',
+        'aged_65_older': 'Population older than 65',
+        'aged_70_older': 'Population older than 70',
+        'gdp_per_capita': 'Gdp per capita',
+        'extreme_poverty': 'Extreme poverty ',
+        'cardiovasc_death_rate': 'Cardiovacular death rate',
+        'diabetes_prevalence': 'Diabetes prevalence',
+        'female_smokers': 'Female smokers',
+        'male_smokers': 'Male smokers', 
+        'handwashing_facilities': 'Handwashing facilities',
+        'hospital_beds_per_thousand':'Hospital beds per thousand',
+        'life_expectancy':'Life expectancy',
+        'human_development_index':'Development index',
+    }
+    return sw.get(column)
