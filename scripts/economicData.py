@@ -12,7 +12,7 @@ Methods:
 from pyspark.sql.functions import col, asc,desc, when, udf, max, avg
 from os.path import dirname, abspath
 
-class economicData:
+class EconomicData:
 
     # the function receives a SparkSession and initializes the dataframe needed
     def __init__(self, sparkSes):

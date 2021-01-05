@@ -9,10 +9,11 @@ Methods:
     Various methods that select some specific data and return them as a dataframe.
     Each method has a comment that explains its purpose.
 '''
-from pyspark.sql.functions import col, asc,desc, when, udf, max, avg
+from pyspark.sql.functions import col, asc,desc, when, udf, min, max, avg, struct, row_number
 from os.path import dirname, abspath
+from pyspark.sql.window import Window
 
-class processData:
+class ProcessData:
 
     # the function receives a SparkSession and initializes the dataframe needed
     def __init__(self, sparkSes):
@@ -26,6 +27,14 @@ class processData:
                 .groupBy('location', indicator)
                 .agg(max('date'))
                 .select('location', indicator))
+
+    # Give the up-to-date indicator's value for all the countries
+    def get_indicator_all_countries(self, indicator):
+        return (self.df_covid_data.filter((self.df_covid_data['location'] != 'World') & (self.df_covid_data['location'] != 'International') & self.df_covid_data[indicator].isNotNull())
+                .groupBy('location', indicator)
+                .agg(max('date'))
+                .select('location', indicator)
+                .sort(col('location').asc()))
 
     # Returns the 'num_countries' countries with the highest up-to-date indicator's value
     def get_countries_with_highest_indicator(self, num_countries, indicator):
@@ -43,13 +52,40 @@ class processData:
                 .select('location', indicator)
                 .sort(col(indicator).asc()).limit(num_countries))
 
-    # Returns the up-to-date indicator's average value for each continent
+    # Returns the up-to-date indicator's average, min and max value for each continent
     def get_indicator_by_continent(self, indicator):
-        return (self.df_covid_data.filter(self.df_covid_data[indicator].isNotNull())
-                .filter(self.df_covid_data['continent'].isNotNull())
-                .groupBy('location','continent', indicator)
+        df = self.df_covid_data.filter(self.df_covid_data[indicator].isNotNull()) \
+                 .filter(self.df_covid_data['continent'].isNotNull()) \
+                 .groupBy('location','continent', indicator) \
+                 .agg(max('date'))
+
+        windowSpec = Window.partitionBy('continent').orderBy(desc(indicator))
+        windowSpecAgg = Window.partitionBy('continent')
+        df = df.withColumn("row",row_number().over(windowSpec)) \
+                .withColumn('avg', avg(df[indicator]).over(windowSpecAgg)) \
+                .withColumn('min', min(df[indicator]).over(windowSpecAgg)) \
+                .withColumn('max', max(df[indicator]).over(windowSpecAgg)) \
+                .where(col("row")==1).select('continent','avg','min','max')
+        return df
+    
+    # Returns the 'num_countries' countries with the highest up-to-date indicator's value for each country
+    def get_countries_with_highest_indicator_per_continent(self, num_countries, indicator): 
+        df = self.df_covid_data.filter(self.df_covid_data[indicator].isNotNull()) \
+                .filter(self.df_covid_data['continent'].isNotNull()) \
+                .groupBy('continent', 'location', indicator) \
                 .agg(max('date'))
-                .select('continent', indicator)
-                .groupBy('continent')
-                .agg(avg(indicator).alias(indicator))
-                .sort(col(indicator).desc()))
+        windowSpec = Window.partitionBy('continent').orderBy(desc(indicator))
+        df = df.withColumn('row',row_number().over(windowSpec)) \
+                .where(col('row') <= num_countries).select('continent','location',indicator)
+        return df
+
+    # Returns the 'num_countries' countries with the lowest up-to-date indicator's value for each country
+    def get_countries_with_lowest_indicator_per_continent(self, num_countries, indicator): 
+        df = self.df_covid_data.filter(self.df_covid_data[indicator].isNotNull()) \
+                .filter(self.df_covid_data['continent'].isNotNull()) \
+                .groupBy('continent', 'location', indicator) \
+                .agg(max('date'))
+        windowSpec = Window.partitionBy('continent').orderBy(asc(indicator))
+        df = df.withColumn('row',row_number().over(windowSpec)) \
+                .where(col('row') <= num_countries).select('continent','location',indicator)
+        return df

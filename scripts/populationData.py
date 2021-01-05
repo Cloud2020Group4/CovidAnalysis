@@ -12,7 +12,7 @@ Methods:
 from pyspark.sql.functions import col, asc,desc, when, udf, max, avg
 from os.path import dirname, abspath
 
-class populationData:
+class PopulationData:
 
     # the function receives a SparkSession and initializes the dataframe needed
     def __init__(self, sparkSes):
@@ -40,4 +40,6 @@ class populationData:
                 .agg(max('date'))
                 .select('continent', 'population', 'population_density', 'median_age', 'aged_65_older', 'aged_70_older', 'life_expectancy')
                 .groupBy('continent')
-                .agg(avg('population').alias('population'), avg('population_density').alias('population_density'), avg('median_age').alias('median_age'), avg('aged_65_older').alias('aged_65_older'), avg('aged_70_older').alias('aged_70_older'), avg('life_expectancy').alias('life_expectancy')))
+                .agg(avg('population').alias('population'), avg('population_density').alias('population_density'), 
+                avg('median_age').alias('median_age'),avg('aged_65_older').alias('aged_65_older'), 
+                avg('aged_70_older').alias('aged_70_older'), avg('life_expectancy').alias('life_expectancy')))
