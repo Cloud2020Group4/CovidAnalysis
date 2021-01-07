@@ -16,6 +16,15 @@ def month_string(month):
 
     return sw.get(month)
 
+def num_days_a_month(month):
+    if month in [1,3,5,7,8,10,12]:
+        return 31
+    elif month == 2:
+        return 29
+    else:
+        return 30
+
+
 def get_correct_columns(smoothed, totals, relative):
     '''
     total_cases,

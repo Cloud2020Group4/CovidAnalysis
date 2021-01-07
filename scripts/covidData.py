@@ -145,10 +145,7 @@ class CovidData:
     # [3.1] Given a month returns the total number of cases that month in each country
     def get_data_a_month_total_all_countries(self, this_month, avg = False, relative = False):
         cases, deaths, cases_text, deaths_text = utils.get_correct_columns(False, False, relative)
-        if avg:
-            aggregate = 'avg'
-        else:
-            aggregate = 'sum' 
+        aggregate, _, _ = utils.get_correct_names_aggregate(avg)
         return (self.get_data_a_month_daily_all_countries(this_month, relative=relative)
                 .select('location', cases, deaths)
                 .groupBy('location').agg({cases: aggregate, deaths : aggregate}))
@@ -185,7 +182,12 @@ class CovidData:
         df = self.get_data_a_month_total_all_countries(this_month, relative = relative)
         month_str = utils.month_string(this_month)
         return self.get_top_countries(df, sum_deaths, deaths, deaths_text, num_countries, asc, plot, month_str, 'in ' + month_str)
-
+    
+    # [3.2] Returns the total cumulative data until a date for all countries
+    def get_total_data_until_a_date_all_countries(self, date, relative = False):
+        cases, deaths, cases_text, deaths_text = utils.get_correct_columns(False, True, relative)
+        df = self.get_data_a_date_all_countries(date, totals = True, relative = relative)
+        return df
 
     # [3.2.1] Returns the top 'num_countries' with more cumulative cases until a given date
 
