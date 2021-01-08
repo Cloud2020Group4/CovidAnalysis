@@ -1,8 +1,13 @@
 import os
 from os.path import dirname, abspath
+import urllib.request
 import utils
+from datetime import datetime
 
 dir = dirname(dirname(abspath(__file__)))
+
+def download_datasets():
+    urllib.request.urlretrieve("https://covid.ourworldindata.org/data/owid-covid-data.csv", dir + "/datasets/owid-covid-data.csv")
 
 def write_executable(data_type, to_execute):
     file = open(dir + '/scripts/execute.py','w')
@@ -401,14 +406,20 @@ def main():
     while True:
         print("**********************")
         print("Menu")
-        print("1.Covid-19 data")
-        print("2.Economic data")
-        print("3.Populational data")    
-        print("4.Health data")
-        print("5.Exit")
+        print("1.DOWNLOAD THE NEWEST DATASETS- Please execute this option in the first place before doing anything else")
+        print("2.Covid-19 data")
+        print("3.Economic data")
+        print("4.Populational data")    
+        print("5.Health data")
+        print("6.Exit")
         print("**********************")
         choice=enter_integer("Enter your choice: ")
-        if choice==1:
+        if choice== 1:
+            download_datasets()
+            now = datetime.now()
+            dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+            print("Now you are working with data downloaded on the: " + dt_string)
+        elif choice==2:
             while(True):
                 print("----------------------")
                 print("Covid-19 data menu")
@@ -518,7 +529,7 @@ def main():
             write_executable_covid_data(final_option)
             os.system("spark-submit " + dir + "/scripts/execute.py")
         
-        elif choice==2:
+        elif choice==3:
             while(True):
                 print("----------------------")
                 print("Economic data menu")
@@ -543,7 +554,7 @@ def main():
                     print("Wrong Choice")
             
 
-        elif choice==3:
+        elif choice==4:
             while(True):
                 print("----------------------")
                 print("Population data menu")
@@ -582,7 +593,7 @@ def main():
                 else:
                     print("Wrong Choice")
 
-        elif choice==4:
+        elif choice==5:
             while(True):
                 print("----------------------")
                 print("Health data menu")
@@ -621,7 +632,7 @@ def main():
                 else:
                     print("Wrong Choice")
 
-        elif choice==5:
+        elif choice==6:
             break
         else:
             print("Wrong Choice")
