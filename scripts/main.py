@@ -1,6 +1,3 @@
-# Example of main. 
-# It only tries some implemented functions in order to see if they work properly
-
 import os
 from os.path import dirname, abspath
 import utils
@@ -14,6 +11,7 @@ def write_executable(data_type, to_execute):
     file.write("spark = SparkSession.builder.appName('CovidAnalysis').master('local').getOrCreate()\n")
     if data_type=='covid':
         file.write('data = covidData.CovidData(spark)\n')
+
     elif data_type=='economy':
         file.write('data = processData.ProcessData(spark)\n')
         
@@ -23,13 +21,13 @@ def write_executable(data_type, to_execute):
     elif data_type=='health':
         file.write('data = processData.ProcessData(spark)\n')
 
-    file.write('df =' + to_execute)
+    file.write('df =' + to_execute + '\n')
 
-    # Provisional puesto que haga un show de los resultados.
-    file.write('df.show()')
+    # Show the dataframe
+    file.write('df.show()' + '\n')
     
-    # TODO: Poner para que se guarden los resultados en un fichero
-    # Hacer el df.show() y guardar que sean opcionales y lo indique el usuario????
+    # Print dataframe to file
+    file.write("df.coalesce(1).write.format('csv').options(header=True).save('" + dir + "/ouput')")
     file.close() 
 
 def enter_integer(text):
