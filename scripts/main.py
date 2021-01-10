@@ -11,7 +11,7 @@ def download_datasets():
 
 def write_executable(data_type, to_execute):
     file = open(dir + '/scripts/execute.py','w')
-    file.write('import covidData, economicData,populationData, processData\n')
+    file.write('import covidData, economicData,populationData, processData, vaccinesData\n')
     file.write('from pyspark.sql import SparkSession\n')
     file.write("spark = SparkSession.builder.appName('CovidAnalysis').master('local').getOrCreate()\n")
     if data_type=='covid':
