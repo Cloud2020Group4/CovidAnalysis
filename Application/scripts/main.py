@@ -12,6 +12,7 @@ def download_datasets():
 def write_executable(data_type, to_execute):
     file = open(dir + '/scripts/execute.py','w')
     file.write('import covidData, economicData,populationData, processData, vaccinesData\n')
+    file.write('import shutil\n')
     file.write('from pyspark.sql import SparkSession\n')
     file.write("spark = SparkSession.builder.appName('CovidAnalysis').master('local').getOrCreate()\n")
     if data_type=='covid':
@@ -32,6 +33,7 @@ def write_executable(data_type, to_execute):
     file.write('df.show()' + '\n')
     
     # Print dataframe to file
+    file.write("shutil.rmtree('" + dir  + "/ouput', ignore_errors = True, onerror = None)\n")
     file.write("df.coalesce(1).write.format('csv').options(header=True).save('" + dir + "/ouput')")
     file.close() 
 
@@ -142,8 +144,8 @@ def date_limit_options():
         print("/////////////////////////////////////////////////////////")
         dates_option = enter_integer("Enter an option: ")
         if dates_option == 1:
-            break
             ret = ''
+            break
         elif dates_option == 2:
             date_ini = enter_date()
             ret = ", date_ini='" + date_ini + "'"

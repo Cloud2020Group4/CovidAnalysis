@@ -9,7 +9,7 @@ import utils
 
 class vaccinesData:
 
-	def __init__(self, sparkSes):
+    def __init__(self, sparkSes):
         self.spark = sparkSes
         self.dir = dirname(dirname(abspath(__file__)))
         self.df_covid_data = self.spark.read.csv(self.dir + '/datasets/vaccine.csv', header = True, inferSchema=True)
