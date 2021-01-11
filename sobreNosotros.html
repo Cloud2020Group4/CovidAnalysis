@@ -26,6 +26,7 @@
 					<nav id="nav">
 						<ul class="links">
 							<li><a href="index.html">Ideas Principales del Proyecto</a></li>
+							<li><a href="funcionamiento.html">FUNCIONAMIENTO</a></li>
 							<li><a href="datasets.html">Datasets</a></li>
 							<li class="active"><a href="sobreNosotros.html">Sobre Nosotros</a></li>
 						</ul>
@@ -38,45 +39,29 @@
 				<!-- Main -->
 				<div id="main">
 
-						<!-- Post -->
-							<section class="post">
-								<header class="major">
-								
-									<h1>Información sobre Nosotros</h1>
-									<p>Click en cualquier nombre para mostrar información.</p>
-								</header>
+						<section>
+								<p id="Carla" onclick="toggleMenuCarla()" class="button  small fit"> CARLA MARTÍNEZ NIETO-MARQUEZ</p>
+								<div id="menu-box-Carla" style="display: none">
+									<blockquote>Informacion sobre Carla</blockquote>
+								</div>
+								<p id="Daniel" onclick="toggleMenuDaniel()" class="button small fit"> DANIEL LEDESMA VENTURA</p>
+								<div id="menu-box-Daniel" style="display: none">
+									<blockquote>Informacion sobre Daniel</blockquote>
+								</div>
+								<p id="Javier" onclick="toggleMenuJavier()"  class="button small fit">  JAVIER GUZMÁN MUÑOZ </p>
+								<div id="menu-box-Javier" style="display: none">
+									<blockquote>Informacion sobre Javier</blockquote>
+								</div>
+								<p id="Gonzalo" onclick="toggleMenuGonzalo()"  class="button  small fit"> GONZALO FERNÁNDEZ MEJÍAS </p>
+								<div id="menu-box-Gonzalo" style="display: none">
+									<blockquote>Informacion sobre Gonzalo</blockquote>
+								</div>
+								<p id="Pablo" onclick="toggleMenuPablo()"  class="button  small fit"> PABLO MORER OLMOS</p>
+								<div id="menu-box-Pablo" style="display: none">
+									<blockquote>Informacion sobre Pablo</blockquote>
+								</div>
 
-								<div>
-									<a href="#" onclick="showMenuCarla(event)" onblur="hideMenu()"> Carla Martínez </a>
-										<ul id="menuC">
-											<p> Información sobre Carla </p>
-										</ul>
-								</div>
-								<div>
-									<a href="#" onclick="showMenuGonzalo(event)" onblur="hideMenuGonzalo()"> Gonzalo Fernández </a>
-										<ul id="menuG">
-											<p> Información sobre Gonzalo </p>
-									</ul>
-								</div>
-								<div>
-									<a href="#" onclick="showMenuJavier(event)" onblur="hideMenuJavier()"> Javier Guzmán </a>
-										<ul id="menuJ">
-											<p> Información sobre Javier </p>
-										</ul>
-								</div>
-								<div>
-									<a href="#" onclick="showMenuDaniel(event)" onblur="hideMenuDaniel()"> Daniel Ledesma </a>
-										<ul id="menuD">
-											<p> Información sobre Daniel </p>
-									</ul>
-								</div>
-								<div>
-									<a href="#" onclick="showMenuPablo(event)" onblur="hideMenuPablo()"> Pablo Morer </a>
-										<ul id="menuP">
-											<p> Información sobre Pablo </p>
-									</ul>
-								</div>
-								
+
 
 							</section>
 					</div>
@@ -100,50 +85,60 @@
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
 
+			
 
-			<script>
-					function showMenuCarla(e){
-							e.preventDefault();
-							$("#menuC").slideToggle();
-							}
-					function hideMenuCarla(){
-							$("#menuC").slideUp();
-							}
 
-					function showMenuGonzalo(e){
-							e.preventDefault();
-							$("#menuG").slideToggle();
-							}
-					function hideMenuGonzalo(){
-							$("#menuG").slideUp();
-							}
+<script>
+	function toggleMenuCarla() {
+	var menuBox = document.getElementById('menu-box-Carla');    
+		if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
+			menuBox.style.display = "none";
+		}
+		else { // if is menuBox hidden, display it
+			menuBox.style.display = "block";
+		}
+	}
 
-					function showMenuJavier(e){
-							e.preventDefault();
-							$("#menuJ").slideToggle();
-							}
-					function hideMenuJavier(){
-							$("#menuJ").slideUp();
-							}
+	function toggleMenuDaniel() {
+	var menuBox = document.getElementById('menu-box-Daniel');    
+		if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
+			menuBox.style.display = "none";
+		}
+		else { // if is menuBox hidden, display it
+			menuBox.style.display = "block";
+		}
+	}
 
-					function showMenuDaniel(e){
-							e.preventDefault();
-							$("#menuD").slideToggle();
-							}
-					function hideMenuDaniel(){
-							$("#menuD").slideUp();
-							}
+	function toggleMenuPablo() {
+	var menuBox = document.getElementById('menu-box-Pablo');    
+		if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
+			menuBox.style.display = "none";
+		}
+		else { // if is menuBox hidden, display it
+			menuBox.style.display = "block";
+		}
+	}
 
-					function showMenuPablo(e){
-							e.preventDefault();
-							$("#menuP").slideToggle();
-							}
-					function hideMenuPablo(){
-							$("#menuP").slideUp();
-							}
-					
-			</script>
+	function toggleMenuJavier() {
+	var menuBox = document.getElementById('menu-box-Javier');    
+		if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
+			menuBox.style.display = "none";
+		}
+		else { // if is menuBox hidden, display it
+			menuBox.style.display = "block";
+		}
+	}
 
+	function toggleMenuGonzalo() {
+	var menuBox = document.getElementById('menu-box-Gonzalo');    
+		if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
+			menuBox.style.display = "none";
+		}
+		else { // if is menuBox hidden, display it
+			menuBox.style.display = "block";
+		}
+	}
+</script>
 
 
 	</body>

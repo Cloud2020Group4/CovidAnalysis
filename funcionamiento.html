@@ -1,0 +1,177 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>Funcionamiento</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+        		<!-- Wrapper -->
+			<div id="wrapper" class="fade-in">
+
+				<!-- Intro -->
+					<header id="header">
+						<a href="index.html" class="logo">Información</a>
+					</header>
+
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul class="links">
+							<li><a href="index.html">Ideas Principales del Proyecto</a></li>
+							<li class="active" ><a href ="funcionamiento.html"> Funcionamiento </a></li>
+							<li><a href="datasets.html">Datasets</a></li>
+							<li><a href="sobreNosotros.html">Sobre Nosotros</a></li>
+						</ul>
+						<ul class="icons">
+							<li><a href="https://github.com/Cloud2020Group4/CovidAnalysis" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+						</ul>
+                    </nav>
+                    
+
+                    
+				<!-- Main -->
+					<div id="main">
+
+                        <article class="post featured">
+                           
+                            
+                            <div class="table-wrapper">
+
+                                <h2><header>¿Cómo Funciona?</header></h2>
+                                <p>
+                                    CovidAnalysis es un proyecto destinado al estudio y el análisis de distintos ámbitos económios y sanitarios donde la pandemia ha dejado huella.
+                                    <br>
+                                    Para ello, hemos llevado a cabo tres fases:
+                                    <h4 id="P1" onclick="toggleMenuP1()" class="button small fit">  1.  Procesamiento Big Data y Procesamiento paralelo</h4>
+                                    <div id="menu-box-P1" style="display: none">
+                                        <blockquote>
+                                            El volumen  de datos con el que vamos a trabajar, 
+                                            disponemos de un conjunto de datos de tamaño considerable
+                                            que además va a seguir creciendo puesto que los datos relativos a la 
+                                            pandemia se actualizan cada día.<br><br>
+
+                                            Utilizando procesamiento paralelo obtendremos una mejora en cuanto a la eficiencia respecto del procesamiento habitual.
+                                            Para justificar esta mejora, una parte clave de nuestro proyecto será el análisis de la mejora del 
+                                            rendimiento al aplicar procesamiento paralelo.
+
+                                        </blockquote>
+                                    </div>
+                                    <h4 id="P2" onclick="toggleMenuP2()" class="button small fit">  2.  Aplicacion en técnicas Machine Learning</h4>
+                                    <div id="menu-box-P2" style="display: none">
+                                     <blockquote>
+                                        Aplicación de técnicas de Machine Learning para encontrar relaciones entre las distintas fuentes de datos y análisis de los resultados.
+                                        Debido a que los datos con los que trabajamos son muy variados ya que los extraemos de fuentes muy distintas, aplicamos 
+                                        técnicas de Machine Learning mediante la libreria MLlib, para encontrar relaciones entre las distintas fuentes de datos y análisis de los resultados.
+
+
+                                                <center><button><a href="https://spark.apache.org/docs/latest/ml-guide.html"> MLlib </a></button></center>
+
+                                     </blockquote>
+                                     </div>
+                                     <h4 id="P3" onclick="toggleMenuP3()" class="button small fit"> 3. Análisis y visualización</h4>
+                                     <div id="menu-box-P3" style="display: none">
+                                     <blockquote>
+                                         Debido a que los datos con los que trabajamos son muy variados ya que los extraemos de fuentes muy distintas, 
+                                         mediante un análisis exhaustivo buscamos una correlación entre ellos y así poder mostrar un resultado.
+                                        
+                                        <br><br>
+                                        Debido a la complejidad que puede resultar entender los datos vistos solamente de forma numérica, decidimos representar los resultados 
+                                        obtenidos de forma visual 
+                                        mediante distintas gráficas.
+                                        <br>
+
+                                        <center><button><a href="graficas.html"> Gráficas</a></button></center>
+ 
+                                     </blockquote>
+
+                                    </div>
+
+
+
+                                </p>
+                                
+                                    
+                                <hr>
+
+                                <h2><header>¿Cómo se Ejecuta?</header></h2>
+                                <p>hola</p>
+                                
+                                <hr>
+
+                                 <p>hola</p>
+
+                                <hr>
+
+                                <p>hola</p>
+                       
+                                
+                            </div>
+
+                            
+
+                        </article>
+
+                        
+
+
+
+					</div>
+
+
+                    				<!-- Copyright -->
+					<div id="copyright">
+						<ul><li>&copy; Untitled</li><li>Design: <a href="https://html5up.net">HTML5 UP</a></li></ul>
+					</div>
+
+
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+
+            <script>
+                function toggleMenuP1() {
+                    var menuBox = document.getElementById('menu-box-P1');    
+                        if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
+                            menuBox.style.display = "none";
+                        }
+                        else { // if is menuBox hidden, display it
+                            menuBox.style.display = "block";
+                        }
+                    }
+
+                    function toggleMenuP2() {
+                    var menuBox = document.getElementById('menu-box-P2');    
+                        if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
+                            menuBox.style.display = "none";
+                        }
+                        else { // if is menuBox hidden, display it
+                            menuBox.style.display = "block";
+                        }
+                    }
+
+                    function toggleMenuP3() {
+                    var menuBox = document.getElementById('menu-box-P3');    
+                        if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
+                            menuBox.style.display = "none";
+                        }
+                        else { // if is menuBox hidden, display it
+                            menuBox.style.display = "block";
+                        }
+                    }
+            </script>
+
+
+	</body>
+</html>
