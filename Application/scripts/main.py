@@ -37,8 +37,12 @@ def write_executable(data_type, to_execute, mode):
     file.write('df.show()' + '\n')
     
     # Print dataframe to file
-    file.write("shutil.rmtree('" + dir  + "/ouput', ignore_errors = True, onerror = None)\n")
-    file.write("df.coalesce(1).write.format('csv').options(header=True).save('" + dir + "/ouput')")
+    if mode == 'local':
+        file.write("shutil.rmtree('" + dir  + "/output', ignore_errors = True, onerror = None)\n")
+        file.write("df.coalesce(1).write.format('csv').options(header=True).save('" + dir + "/output')")
+    elif mode == 'hadoop':
+        file.write("os.system('hadoop fs -rm -r output')"
+        file.write("df.coalesce(1).write.format('csv').options(header=True).save('output')")
     file.close() 
 
 def enter_integer(text):
@@ -342,7 +346,7 @@ def aux_menu(indicator, dataType, mode):
             write_executable(dataType, "data.get_indicator_all_countries('" + indicator + "')\n", mode)
             break
         elif option==3:
-            num_countries=enter_integer("Enter the number of countries you want on your top: ", mode)
+            num_countries=enter_integer("Enter the number of countries you want on your top: ")
             while(True):
                 plot=input("Do you want to plot the results[y/n]?:")
                 if(plot=='y'):
@@ -419,10 +423,12 @@ def main():
         if mode_op == 1:
             mode = 'hadoop'
             # Load datasets to HDFS
+            print("Updating datasets to Hadoop File System...")
             os.system("hadoop fs -put -f "+  dir + "/datasets/owid-covid-data.csv")
             os.system("hadoop fs -put -f "+  dir + "/datasets/vaccine.csv")
             os.system("hadoop fs -put -f "+  dir + "/datasets/medical_doctors_per_1000_people.csv")
             os.system("hadoop fs -put -f "+  dir + "/datasets/countries.csv")
+            print("Updating ended...")
             break
         elif mode_op == 2:
             mode = 'local'
