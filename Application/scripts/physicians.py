@@ -11,11 +11,19 @@ class Physicians:
     #from pyspark.sql import SparkSession
     #spark = SparkSession.builder.appName('CovidAnalysis').master('local').getOrCreate()
     #phys = physicians.Physicians(spark)
-    def __init__(self, sparkSes):
+    def __init__(self, sparkSes, mode):
         self.spark = sparkSes
-        self.df_physicians = self.spark.read.csv('medical_doctors_per_1000_people.csv', header = True, inferSchema=True)
-        self.df_continents = self.spark.read.csv('countries.csv', header = True, inferSchema=True)
         self.dir = dirname(dirname(abspath(__file__)))
+
+        if mode == 'local':
+            self.data_dir_pysicians = self.dir + '/datasets/medical_doctors_per_1000_people.csv'
+            self.data_dir_continents = self.dir + '/datasets/countries.csv'
+        elif mode == 'hadoop':
+            self.data_dir_pysicians = 'medical_doctors_per_1000_people.csv'
+            self.data_dir_continents = 'countries.csv'
+
+        self.df_physicians = self.spark.read.csv(self.data_dir_pysicians, header = True, inferSchema=True)
+        self.df_continents = self.spark.read.csv(self.data_dir_continents, header = True, inferSchema=True)
     #Returns the number of doctors per 1000 people given a country and year
     #Probar-> phys.get_doctors_country_and_year('1962','Albania').show()
     def get_doctors_country_and_year(self, year, country):

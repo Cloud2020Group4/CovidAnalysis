@@ -9,10 +9,15 @@ import utils
 
 class vaccinesData:
 
-    def __init__(self, sparkSes):
+    def __init__(self, sparkSes, mode):
         self.spark = sparkSes
         self.dir = dirname(dirname(abspath(__file__)))
-        self.df_covid_data = self.spark.read.csv(self.dir + '/datasets/vaccine.csv', header = True, inferSchema=True)
+        if mode == 'local':
+            self.data_dir = self.dir + "/datasets/vaccine.csv"
+        elif mode == 'hadoop':
+            self.data_dir = "vaccine.csv"
+
+        self.df_covid_data = self.spark.read.csv(self.data_dir, header = True, inferSchema=True)
 
     #Show the rate of how the people agree with the importance of the vaccines in the country chosen. 
     def  get_vaccines_importance_data_per_country(self, country):

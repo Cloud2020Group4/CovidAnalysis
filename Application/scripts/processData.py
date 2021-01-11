@@ -29,10 +29,14 @@ import utils
 class ProcessData:
 
     # [Constructor] the function receives a SparkSession and initializes the dataframe needed
-    def __init__(self, sparkSes):
+    def __init__(self, sparkSes, mode):
         self.spark = sparkSes
         self.dir = dirname(dirname(abspath(__file__)))
-        self.df_covid_data = self.spark.read.csv(self.dir + '/datasets/owid-covid-data.csv', header = True, inferSchema=True)
+        if mode == 'local':
+            self.data_dir = self.dir + "/datasets/owid-covid-data.csv"
+        elif mode == 'hadoop':
+            self.data_dir = "owid-covid-data.csv"
+        self.df_covid_data = self.spark.read.csv(self.data_dir, header = True, inferSchema=True)
 
     # 1. Given a country gives its up-to-date indicator's value
     def get_indicator_per_country(self, country, indicator):

@@ -6,26 +6,30 @@ from datetime import datetime
 
 dir = dirname(dirname(abspath(__file__)))
 
-def download_datasets():
+def download_datasets(mode):
     urllib.request.urlretrieve("https://covid.ourworldindata.org/data/owid-covid-data.csv", dir + "/datasets/owid-covid-data.csv")
+    if mode == 'hadoop':
+        os.system("hadoop fs -put"+  dir + "/datasets/owid-covid-data.csv")
 
-def write_executable(data_type, to_execute):
+
+def write_executable(data_type, to_execute, mode):
     file = open(dir + '/scripts/execute.py','w')
+    print(mode)
     file.write('import covidData, economicData,populationData, processData, vaccinesData\n')
     file.write('import shutil\n')
     file.write('from pyspark.sql import SparkSession\n')
     file.write("spark = SparkSession.builder.appName('CovidAnalysis').master('local').getOrCreate()\n")
     if data_type=='covid':
-        file.write('data = covidData.CovidData(spark)\n')
+        file.write("data = covidData.CovidData(spark, '" + mode + "')\n")
 
     elif data_type=='economy':
-        file.write('data = processData.ProcessData(spark)\n')
+        file.write("data = processData.ProcessData(spark, '" + mode + "')\n")
         
     elif data_type=='population':
-        file.write('data = processData.ProcessData(spark)\n')
+        file.write("data = processData.ProcessData(spark, '" + mode + "')\n")
         
     elif data_type=='health':
-        file.write('data = processData.ProcessData(spark)\n')
+        file.write("data = processData.ProcessData(spark, '" + mode + "')\n")
 
     file.write('df =' + to_execute + '\n')
 
@@ -190,7 +194,7 @@ def ask_options_covid_data(has_smoothed, has_totals, has_relative, has_plot):
         text = text + ', plot=' + str(plot)
     return text
 
-def write_executable_covid_data(final_option):
+def write_executable_covid_data(final_option, mode):
     if final_option == '1.1':
         date = enter_date()
         options_text = ask_options_covid_data(True, True, True, False)
@@ -314,9 +318,9 @@ def write_executable_covid_data(final_option):
         options_text = ask_options_covid_data(False, False, True, True)
         func = "data.compare_two_countries_all_months_aggregated('" + country1 + "', '" + country2 + "'" + agg_option + options_text + ")"
     
-    write_executable('covid', func)
+    write_executable('covid', func, mode)
     
-def aux_menu(indicator, dataType):
+def aux_menu(indicator, dataType, mode):
     while(True):
         print("//////////////////////")
         print("What kind of information do you want?")
@@ -332,20 +336,20 @@ def aux_menu(indicator, dataType):
         if option==1:
             #TODO: make sure that the country is correct (Realmente es necesario esto???? Si metes un país que este mal devuelve un df vacio no?)
             country=input("Enter the name of a country: ")
-            write_executable(dataType, "data.get_indicator_per_country('" + country + "','" + indicator + "')\n")
+            write_executable(dataType, "data.get_indicator_per_country('" + country + "','" + indicator + "')\n", mode)
             break
         elif option==2:
-            write_executable(dataType, "data.get_indicator_all_countries('" + indicator + "')\n")
+            write_executable(dataType, "data.get_indicator_all_countries('" + indicator + "')\n", mode)
             break
         elif option==3:
-            num_countries=enter_integer("Enter the number of countries you want on your top: ")
+            num_countries=enter_integer("Enter the number of countries you want on your top: ", mode)
             while(True):
                 plot=input("Do you want to plot the results[y/n]?:")
                 if(plot=='y'):
-                    write_executable(dataType, "data.get_countries_with_highest_indicator(" + str(num_countries) + ",'" + indicator + "',plot=True)\n")
+                    write_executable(dataType, "data.get_countries_with_highest_indicator(" + str(num_countries) + ",'" + indicator + "',plot=True)\n", mode)
                     break
                 elif(plot=='n'):
-                    write_executable(dataType, "data.get_countries_with_highest_indicator(" + str(num_countries) + ",'" + indicator + "')\n")
+                    write_executable(dataType, "data.get_countries_with_highest_indicator(" + str(num_countries) + ",'" + indicator + "')\n", mode)
                     break
                 else:
                     print("Wrong answer")
@@ -355,10 +359,10 @@ def aux_menu(indicator, dataType):
             while(True):
                 plot=input("Do you want to plot the results[y/n]?:")
                 if(plot=='y'):
-                    write_executable(dataType, "data.get_countries_with_lowest_indicator(" + str(num_countries) + ",'" + indicator + "',plot=True)\n")
+                    write_executable(dataType, "data.get_countries_with_lowest_indicator(" + str(num_countries) + ",'" + indicator + "',plot=True)\n", mode)
                     break
                 elif(plot=='n'):
-                    write_executable(dataType, "data.get_countries_with_lowest_indicator(" + str(num_countries) + ",'" + indicator + "')\n")
+                    write_executable(dataType, "data.get_countries_with_lowest_indicator(" + str(num_countries) + ",'" + indicator + "')\n", mode)
                     break
                 else:
                     print("Wrong answer")
@@ -367,10 +371,10 @@ def aux_menu(indicator, dataType):
             while(True):
                 plot=input("Do you want to plot the results[y/n]?:")
                 if(plot=='y'):
-                    write_executable(dataType, "data.get_indicator_by_continent('" +  indicator + "',plot=True)\n")
+                    write_executable(dataType, "data.get_indicator_by_continent('" +  indicator + "',plot=True)\n", mode)
                     break
                 elif(plot=='n'):
-                    write_executable(dataType, "data.get_indicator_by_continent('" + indicator + "')\n")
+                    write_executable(dataType, "data.get_indicator_by_continent('" + indicator + "')\n", mode)
                     break
                 else:
                     print("Wrong answer")
@@ -380,10 +384,10 @@ def aux_menu(indicator, dataType):
             while(True):
                 plot=input("Do you want to plot the results[y/n]?:")
                 if(plot=='y'):
-                    write_executable(dataType, "data.get_countries_with_highest_indicator_per_continent(" + str(num_countries) + ",'" + indicator + "',plot=True)\n")
+                    write_executable(dataType, "data.get_countries_with_highest_indicator_per_continent(" + str(num_countries) + ",'" + indicator + "',plot=True)\n", mode)
                     break
                 elif(plot=='n'):
-                    write_executable(dataType, "data.get_countries_with_highest_indicator_per_continent(" + str(num_countries) + ",'" + indicator + "')\n")
+                    write_executable(dataType, "data.get_countries_with_highest_indicator_per_continent(" + str(num_countries) + ",'" + indicator + "')\n", mode)
                     break
                 else:
                     print("Wrong answer")
@@ -393,10 +397,10 @@ def aux_menu(indicator, dataType):
             while(True):
                 plot=input("Do you want to plot the results[y/n]?:")
                 if(plot=='y'):
-                    write_executable(dataType, "data.get_countries_with_lowest_indicator_per_continent(" + str(num_countries) + ",'" + indicator + "',plot=True)\n")
+                    write_executable(dataType, "data.get_countries_with_lowest_indicator_per_continent(" + str(num_countries) + ",'" + indicator + "',plot=True)\n", mode)
                     break
                 elif(plot=='n'):
-                    write_executable(dataType, "data.get_countries_with_lowest_indicator_per_continent(" + str(num_countries) + ",'" + indicator + "')\n")
+                    write_executable(dataType, "data.get_countries_with_lowest_indicator_per_continent(" + str(num_countries) + ",'" + indicator + "')\n", mode)
                     break
                 else:
                     print("Wrong answer")
@@ -405,6 +409,22 @@ def aux_menu(indicator, dataType):
             print("Wrong Choice")
     
 def main():
+    while(True):
+        print("**********************")
+        print("Where are you executing the application?")
+        print("1.Hadoop Cluster")
+        print("2.Local mode")
+        print("**********************")
+        mode_op = enter_integer("Enter an option: ")
+        if mode_op == 1:
+            mode = 'hadoop'
+            break
+        elif mode_op == 2:
+            mode = 'local'
+            break
+        else:
+            print('Wrong answer')
+        
     while True:
         print("**********************")
         print("Menu")
@@ -417,10 +437,10 @@ def main():
         print("**********************")
         choice=enter_integer("Enter your choice: ")
         if choice== 1:
-            download_datasets()
+            download_datasets(mode)
             now = datetime.now()
             dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-            print("Now you are working with data downloaded on the: " + dt_string)
+            print("Now you are working with data downloaded on date: " + dt_string)
         elif choice==2:
             while(True):
                 print("----------------------")
@@ -528,7 +548,7 @@ def main():
                         else:
                             print("Wrong answer")
                     break
-            write_executable_covid_data(final_option)
+            write_executable_covid_data(final_option, mode)
             os.system("spark-submit " + dir + "/scripts/execute.py")
         
         elif choice==3:
@@ -541,15 +561,15 @@ def main():
                 print("----------------------")
                 option2=enter_integer("Enter the indicator: ")
                 if option2==1:
-                    aux_menu('gdp_per_capita', 'economy')
+                    aux_menu('gdp_per_capita', 'economy', mode)
                     os.system("spark-submit " + dir + "/scripts/execute.py")
                     break
                 elif option2==2:
-                    aux_menu('extreme_poverty', 'economy')
+                    aux_menu('extreme_poverty', 'economy', mode)
                     os.system("spark-submit " + dir + "/scripts/execute.py")
                     break
                 elif option2==3:
-                    aux_menu('human_development_index', 'economy')
+                    aux_menu('human_development_index', 'economy', mode)
                     os.system("spark-submit " + dir + "/scripts/execute.py")
                     break
                 else:
@@ -569,27 +589,27 @@ def main():
                 print("----------------------")
                 option3=enter_integer("Enter the indicator: ")
                 if option3==1:
-                    aux_menu('population', 'population')
+                    aux_menu('population', 'population', mode)
                     os.system("spark-submit " + dir + "/scripts/execute.py")
                     break
                 elif option3==2:
-                    aux_menu('population_density', 'population')
+                    aux_menu('population_density', 'population', mode)
                     os.system("spark-submit " + dir + "/scripts/execute.py")
                     break
                 elif option3==3:
-                    aux_menu('median_age', 'population')
+                    aux_menu('median_age', 'population', mode)
                     os.system("spark-submit " + dir + "/scripts/execute.py")
                     break
                 elif option3==4:
-                    aux_menu('aged_65_older', 'population')
+                    aux_menu('aged_65_older', 'population', mode)
                     os.system("spark-submit " + dir + "/scripts/execute.py")
                     break
                 elif option3==5:
-                    aux_menu('aged_70_older', 'population')
+                    aux_menu('aged_70_older', 'population', mode)
                     os.system("spark-submit " + dir + "/scripts/execute.py")
                     break
                 elif option3==6:
-                    aux_menu('life_expectancy', 'population')
+                    aux_menu('life_expectancy', 'population', mode)
                     os.system("spark-submit " + dir + "/scripts/execute.py")
                     break
                 else:
@@ -608,27 +628,27 @@ def main():
                 print("----------------------")
                 option4=enter_integer("Enter the indicator: ")
                 if option4==1:
-                    aux_menu('cardiovasc_death_rate', 'health')
+                    aux_menu('cardiovasc_death_rate', 'health', mode)
                     os.system("spark-submit " + dir + "/scripts/execute.py")
                     break
                 elif option4==2:
-                    aux_menu('diabetes_prevalence', 'health')
+                    aux_menu('diabetes_prevalence', 'health', mode)
                     os.system("spark-submit " + dir + "/scripts/execute.py")
                     break
                 elif option4==3:
-                    aux_menu('female_smokers', 'health')
+                    aux_menu('female_smokers', 'health', mode)
                     os.system("spark-submit " + dir + "/scripts/execute.py")
                     break
                 elif option4==4:
-                    aux_menu('male_smokers', 'health')
+                    aux_menu('male_smokers', 'health', mode)
                     os.system("spark-submit " + dir + "/scripts/execute.py")
                     break
                 elif option4==5:
-                    aux_menu('handwashing_facilities', 'health')
+                    aux_menu('handwashing_facilities', 'health', mode)
                     os.system("spark-submit " + dir + "/scripts/execute.py")
                     break
                 elif option4==6:
-                    aux_menu('hospital_beds_per_thousand', 'health')
+                    aux_menu('hospital_beds_per_thousand', 'health', mode)
                     os.system("spark-submit " + dir + "/scripts/execute.py")
                     break
                 else:

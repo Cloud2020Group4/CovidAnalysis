@@ -15,10 +15,14 @@ from os.path import dirname, abspath
 class EconomicData:
 
     # the function receives a SparkSession and initializes the dataframe needed
-    def __init__(self, sparkSes):
+    def __init__(self, sparkSes, mode):
         self.spark = sparkSes
         self.dir = dirname(dirname(abspath(__file__)))
-        self.df_covid_data = self.spark.read.csv(self.dir + '/datasets/owid-covid-data.csv', header = True, inferSchema=True)
+        if mode == 'local':
+            self.data_dir = self.dir + "/datasets/owid-covid-data.csv"
+        elif mode == 'hadoop':
+            self.data_dir = "owid-covid-data.csv"
+        self.df_covid_data = self.spark.read.csv(self.data_dir, header = True, inferSchema=True)
 
     # Given a country gives its up-to-date economic indicators (gdp_per_capita, extreme_poverty, human_development_index)
     def get_economic_data_per_country(self, country):
