@@ -14,7 +14,6 @@ def download_datasets(mode):
 
 def write_executable(data_type, to_execute, mode):
     file = open(dir + '/scripts/execute.py','w')
-    print(mode)
     file.write('import covidData, economicData,populationData, processData, vaccinesData\n')
     file.write('import shutil\n')
     file.write('from pyspark.sql import SparkSession\n')
@@ -39,10 +38,11 @@ def write_executable(data_type, to_execute, mode):
     # Print dataframe to file
     if mode == 'local':
         file.write("shutil.rmtree('" + dir  + "/output', ignore_errors = True, onerror = None)\n")
-        file.write("df.coalesce(1).write.format('csv').options(header=True).save('" + dir + "/output')")
+        file.write("df.coalesce(1).write.format('csv').options(header=True).save('" + dir + "/output')\n")
     elif mode == 'hadoop':
-        file.write("os.system('hadoop fs -rm -r output')"
-        file.write("df.coalesce(1).write.format('csv').options(header=True).save('output')")
+        file.write("os.system('hadoop fs -rm -r output')\n")
+        file.write("df.coalesce(1).write.format('csv').options(header=True).save('output')\n")
+
     file.close() 
 
 def enter_integer(text):
