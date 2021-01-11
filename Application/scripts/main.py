@@ -9,7 +9,7 @@ dir = dirname(dirname(abspath(__file__)))
 def download_datasets(mode):
     urllib.request.urlretrieve("https://covid.ourworldindata.org/data/owid-covid-data.csv", dir + "/datasets/owid-covid-data.csv")
     if mode == 'hadoop':
-        os.system("hadoop fs -put "+  dir + "/datasets/owid-covid-data.csv")
+        os.system("hadoop fs -put -f "+  dir + "/datasets/owid-covid-data.csv")
 
 
 def write_executable(data_type, to_execute, mode):
@@ -418,6 +418,11 @@ def main():
         mode_op = enter_integer("Enter an option: ")
         if mode_op == 1:
             mode = 'hadoop'
+            # Load datasets to HDFS
+            os.system("hadoop fs -put -f "+  dir + "/datasets/owid-covid-data.csv")
+            os.system("hadoop fs -put -f "+  dir + "/datasets/vaccine.csv")
+            os.system("hadoop fs -put -f "+  dir + "/datasets/medical_doctors_per_1000_people.csv")
+            os.system("hadoop fs -put -f "+  dir + "/datasets/countries.csv")
             break
         elif mode_op == 2:
             mode = 'local'
