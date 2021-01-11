@@ -9,7 +9,7 @@ dir = dirname(dirname(abspath(__file__)))
 def download_datasets(mode):
     urllib.request.urlretrieve("https://covid.ourworldindata.org/data/owid-covid-data.csv", dir + "/datasets/owid-covid-data.csv")
     if mode == 'hadoop':
-        os.system("hadoop fs -put"+  dir + "/datasets/owid-covid-data.csv")
+        os.system("hadoop fs -put "+  dir + "/datasets/owid-covid-data.csv")
 
 
 def write_executable(data_type, to_execute, mode):
