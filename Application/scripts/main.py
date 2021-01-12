@@ -45,6 +45,16 @@ def write_executable(data_type, to_execute, mode):
 
     file.close() 
 
+def write_executable_machineLearning(mode):
+    file = open(dir + '/scripts/execute.py','w')
+    file.write('import machineLearning\n')
+    file.write('from pyspark.sql import SparkSession\n')
+    file.write("spark = SparkSession.builder.appName('CovidAnalysis').master('local').getOrCreate()\n")
+    file.write("data = machineLearning.MachineLearning(spark, '" + mode + "')\n")
+    file.write('data.main()\n')
+
+    file.close() 
+
 def enter_integer(text):
     val = 0
     while True:
@@ -444,7 +454,8 @@ def main():
         print("3.Economic data")
         print("4.Populational data")    
         print("5.Health data")
-        print("6.Exit")
+        print("6.Machine Learning")
+        print("7.Exit")
         print("**********************")
         choice=enter_integer("Enter your choice: ")
         if choice== 1:
@@ -664,8 +675,10 @@ def main():
                     break
                 else:
                     print("Wrong Choice")
-
         elif choice==6:
+            write_executable_machineLearning(mode)
+            os.system("spark-submit " + dir + "/scripts/execute.py")
+        elif choice==7:
             break
         else:
             print("Wrong Choice")
