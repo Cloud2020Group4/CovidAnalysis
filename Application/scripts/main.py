@@ -14,7 +14,7 @@ def download_datasets(mode):
 
 def write_executable(data_type, to_execute, mode):
     file = open(dir + '/scripts/execute.py','w')
-    file.write('import covidData, economicData,populationData, processData, vaccinesData\n')
+    file.write('import covidData, economicData,populationData, processData, vaccinesData, machineLearning\n')
     file.write('import shutil\n')
     file.write('from pyspark.sql import SparkSession\n')
     file.write("spark = SparkSession.builder.appName('CovidAnalysis').master('local').getOrCreate()\n")
@@ -30,6 +30,9 @@ def write_executable(data_type, to_execute, mode):
     elif data_type=='health':
         file.write("data = processData.ProcessData(spark, '" + mode + "')\n")
 
+    elif data_type=='machineLearning':
+        file.write("data = machineLearning.MachineLearning(spark, '" + mode + "')\n")
+
     file.write('df =' + to_execute + '\n')
 
     # Show the dataframe
@@ -42,16 +45,6 @@ def write_executable(data_type, to_execute, mode):
     elif mode == 'hadoop':
         file.write("os.system('hadoop fs -rm -r output')\n")
         file.write("df.coalesce(1).write.format('csv').options(header=True).save('output')\n")
-
-    file.close() 
-
-def write_executable_machineLearning(mode):
-    file = open(dir + '/scripts/execute.py','w')
-    file.write('import machineLearning\n')
-    file.write('from pyspark.sql import SparkSession\n')
-    file.write("spark = SparkSession.builder.appName('CovidAnalysis').master('local').getOrCreate()\n")
-    file.write("data = machineLearning.MachineLearning(spark, '" + mode + "')\n")
-    file.write('data.main()\n')
 
     file.close() 
 
@@ -676,8 +669,18 @@ def main():
                 else:
                     print("Wrong Choice")
         elif choice==6:
-            write_executable_machineLearning(mode)
-            os.system("spark-submit " + dir + "/scripts/execute.py")
+            while(True):
+                print("----------------------")
+                print("Machine Learning Menu")
+                print("1. Total deaths per million, Total cases per million, GDP per capita, Hospital bed per thousand")
+                print("----------------------")
+                option6=enter_integer("Choose the indicators you want to use when clustering: ")
+                if option6==1:
+                    write_executable('machineLearning', "data.main(['total_deaths_per_million', 'total_cases_per_million', 'gdp_per_capita', 'hospital_beds_per_thousand'])", mode)
+                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    break
+                else: 
+                    print("Wrong Choice")
         elif choice==7:
             break
         else:
