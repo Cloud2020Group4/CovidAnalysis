@@ -4,7 +4,7 @@ from os.path import dirname, abspath
 
 import covidData_graphs
 
-class Physicians:
+class PhysiciansData:
     # the function receives a SparkSession and initializes the dataframes needed
     #Probar->
     #import physicians
@@ -34,7 +34,7 @@ class Physicians:
     def get_top_country(self,num_countries, year, plot = False):
         df = (self.df_physicians.filter(self.df_physicians[year].isNotNull()).select(year,'country').sort(col(year).desc()).limit(num_countries))
         if plot:
-            save_name = './graphs/'+'top_country_physicians.png'
+            save_name = self.dir + '/graphs/'+'top_country_physicians.png'
             title = 'Top countries: Medical Doctors per 1000 people'
             covidData_graphs.plot_bars(df, 'country', year, title, save_name)
             #covidData_graphs.plot_pie(df, 'country', year, title, save_name)
@@ -44,7 +44,7 @@ class Physicians:
     def get_bottom_country(self,num_countries, year, plot = False):
         df = (self.df_physicians.filter(self.df_physicians[year].isNotNull()).select(year,'country').sort(year).limit(num_countries))
         if plot:
-            save_name = './graphs/'+'bottom_country_physicians.png'
+            save_name = self.dir + '/graphs/'+'bottom_country_physicians.png'
             title = 'Bottom countries: Medical Doctors per 1000 people'
             covidData_graphs.plot_bars(df, 'country', year, title, save_name)
         return df
@@ -53,6 +53,7 @@ class Physicians:
     def get_avg_year(self, year):
         df = (self.df_physicians.filter(self.df_physicians[year].isNotNull()).select(year).agg(avg(year)))
         return df
+
     #Returns the continent of the country
     def get_continent(self, country):
         return self.df_continents.filter(self.df_continents['name'] == country).select('region')
@@ -62,7 +63,7 @@ class Physicians:
     def get_bottom_country_continent(self,num_countries, year, continent, plot = False):
         df = (self.df_physicians.filter(self.df_physicians[year].isNotNull()).join(self.df_continents, self.df_physicians.country == self.df_continents.name).filter(self.df_continents['region'] == continent).select(year,'country','region').sort(year).limit(num_countries))
         if plot:
-            save_name = './graphs/'+'bottom_country_continent_physicians.png'
+            save_name = self.dir + '/graphs/'+'bottom_country_continent_physicians.png'
             title = 'Bottom countries in continent: Medical Doctors per 1000 people'
             covidData_graphs.plot_bars(df, 'country', year, title, save_name)
         return df
@@ -72,7 +73,7 @@ class Physicians:
     def get_top_country_continent(self,num_countries, year, continent, plot = False):
         df = (self.df_physicians.filter(self.df_physicians[year].isNotNull()).join(self.df_continents, self.df_physicians.country == self.df_continents.name).filter(self.df_continents['region'] == continent).select(year,'country','region').sort(col(year).desc()).limit(num_countries))
         if plot:
-            save_name = './graphs/'+'top_country_continent_physicians.png'
+            save_name = self.dir + '/graphs/'+'top_country_continent_physicians.png'
             title = 'Top countries continent: Medical Doctors per 1000 people'
             covidData_graphs.plot_bars(df, 'country', year, title, save_name)
         return df

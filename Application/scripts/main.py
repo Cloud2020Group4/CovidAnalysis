@@ -14,7 +14,7 @@ def download_datasets(mode):
 
 def write_executable(data_type, to_execute, mode):
     file = open(dir + '/scripts/execute.py','w')
-    file.write('import covidData, economicData,populationData, processData, vaccinesData, machineLearning, vaccinesData\n')
+    file.write('import covidData, economicData,populationData, processData, vaccinesData,physiciansData, machineLearning, vaccinesData\n')
     file.write('import shutil\n')
     file.write('from pyspark.sql import SparkSession\n')
     file.write("spark = SparkSession.builder.appName('CovidAnalysis').master('local').getOrCreate()\n")
@@ -32,6 +32,9 @@ def write_executable(data_type, to_execute, mode):
 
     elif data_type=='vaccines':
         file.write("data = vaccinesData.VaccinesData(spark, '" + mode + "')\n")
+    
+    elif data_type=='physicians':
+        file.write("data = physiciansData.PhysiciansData(spark, '" + mode + "')\n")
 
     elif data_type=='machineLearning':
         file.write("data = machineLearning.MachineLearning(spark, '" + mode + "')\n")
@@ -350,6 +353,98 @@ def aux_menu_vaccines(data_type, mode):
         elif option==3:
             country=input("Enter the name of a country: ")
             write_executable(data_type, "data.get_vaccines_effectiveness_data_per_country('" + country + "')\n", mode)
+            break
+        else:
+            print("Wrong Choice")
+
+def aux_menu_physicians(data_type, mode):
+    while(True):
+        print("//////////////////////")
+        print("What kind of information do you want?")
+        print("1.Number of doctors per 1000 people given a country and year")
+        print("2.Top with the countries with the highest number of doctors per 1000 people in the world given a year")
+        print("3.Top with the countries with the lowest number of doctors per 1000 people in the world given a year")
+        print("4.Average number of doctors per 1000 people in the world given a year")
+        print("5.Top with the countries with the highest number of doctors per 1000 people given a year and a continent")
+        print("6.Top with the countries with the lowest number of doctors per 1000 people given a year and a continent")
+        print("7.Average number of doctors per 1000 people given a year and a continent")
+        print("//////////////////////")
+        option=enter_integer("Enter your choice: ")
+        if option==1:
+            country=input("Enter the name of a country: ")
+            year=enter_integer("Enter a year (from 1960 to 2018): ")
+            write_executable(data_type, "data.get_doctors_country_and_year('" + str(year) + "','" + country + "')\n", mode)
+            break
+        elif option==2:
+            year=enter_integer("Enter a year (from 1960 to 2018): ")
+            num_countries=enter_integer("Enter the number of countries you want on your top: ")
+            while(True):
+                plot=input("Do you want to plot the results[y/n]?:")
+                if(plot=='y'):
+                    write_executable(data_type, "data.get_top_country(" + str(num_countries) + ",'" + str(year) + "',plot=True)\n", mode)
+                    break
+                elif(plot=='n'):
+                    write_executable(data_type, "data.get_top_country(" + str(num_countries) + ",'" + str(year) + "')\n", mode)
+                    break
+                else:
+                    print("Wrong answer")
+            break
+            break
+        elif option==3:
+            year=enter_integer("Enter a year (from 1960 to 2018): ")
+            num_countries=enter_integer("Enter the number of countries you want on your top: ")
+            while(True):
+                plot=input("Do you want to plot the results[y/n]?:")
+                if(plot=='y'):
+                    write_executable(data_type, "data.get_bottom_country(" + str(num_countries) + ",'" + str(year) + "',plot=True)\n", mode)
+                    break
+                elif(plot=='n'):
+                    write_executable(data_type, "data.get_bottom_country(" + str(num_countries) + ",'" + str(year) + "')\n", mode)
+                    break
+                else:
+                    print("Wrong answer")
+            break
+            break
+        elif option==4:
+            year=enter_integer("Enter a year (from 1960 to 2018): ")
+            write_executable(data_type, "data.get_avg_year('" + str(year)+ "')\n", mode)
+            break
+        elif option==5:
+            continent=input("Enter the name of a continent: ")
+            year=enter_integer("Enter a year (from 1960 to 2018): ")
+            num_countries=enter_integer("Enter the number of countries you want on your top: ")
+            while(True):
+                plot=input("Do you want to plot the results[y/n]?:")
+                if(plot=='y'):
+                    write_executable(data_type, "data.get_top_country_continent(" + str(num_countries) +",'" + str(year) +"','" + continent + "',plot=True)\n", mode)
+                    break
+                elif(plot=='n'):
+                    write_executable(data_type, "data.get_top_country_continent(" + str(num_countries) +",'" + str(year) +"','" + continent +"')\n", mode)
+                    break
+                else:
+                    print("Wrong answer")
+            break
+            break
+        elif option==6:
+            continent=input("Enter the name of a continent: ")
+            year=input("Enter a year (from 1960 to 2018): ")
+            num_countries=enter_integer("Enter the number of countries you want on your top: ")
+            while(True):
+                plot=input("Do you want to plot the results[y/n]?:")
+                if(plot=='y'):
+                    write_executable(data_type, "data.get_bottom_country_continent(" + str(num_countries) +",'" + str(year) +"','" + continent + "',plot=True)\n", mode)
+                    break
+                elif(plot=='n'):
+                    write_executable(data_type, "data.get_bottom_country_continent(" + str(num_countries) +",'" + str(year) +"','" + continent +"')\n", mode)
+                    break
+                else:
+                    print("Wrong answer")
+            break
+            break
+        elif option==7:
+            continent=input("Enter the name of a continent: ")
+            year=input("Enter a year (from 1960 to 2018): ")
+            write_executable(data_type, "data.get_avg_year_continent('"+ str(year) + "','" + continent + "')\n", mode)
             break
         else:
             print("Wrong Choice")
