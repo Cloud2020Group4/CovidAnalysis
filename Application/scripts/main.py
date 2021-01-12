@@ -14,7 +14,7 @@ def download_datasets(mode):
 
 def write_executable(data_type, to_execute, mode):
     file = open(dir + '/scripts/execute.py','w')
-    file.write('import covidData, economicData,populationData, processData, vaccinesData, machineLearning\n')
+    file.write('import covidData, economicData,populationData, processData, vaccinesData, machineLearning, vaccinesData\n')
     file.write('import shutil\n')
     file.write('from pyspark.sql import SparkSession\n')
     file.write("spark = SparkSession.builder.appName('CovidAnalysis').master('local').getOrCreate()\n")
@@ -29,6 +29,9 @@ def write_executable(data_type, to_execute, mode):
         
     elif data_type=='health':
         file.write("data = processData.ProcessData(spark, '" + mode + "')\n")
+
+    elif data_type=='vaccines':
+        file.write("data = vaccinesData.VaccinesData(spark, '" + mode + "')\n")
 
     elif data_type=='machineLearning':
         file.write("data = machineLearning.MachineLearning(spark, '" + mode + "')\n")
@@ -326,7 +329,31 @@ def write_executable_covid_data(final_option, mode):
         func = "data.compare_two_countries_all_months_aggregated('" + country1 + "', '" + country2 + "'" + agg_option + options_text + ")"
     
     write_executable('covid', func, mode)
-    
+
+def aux_menu_vaccines(data_type, mode):
+    while(True):
+        print("//////////////////////")
+        print("What kind of information do you want?")
+        print("1.Opinion about vaccines importance given a country")
+        print("2.Opinion about vaccines safety given a country")
+        print("3.Opinion about vaccines effectiveness given a country")
+        print("//////////////////////")
+        option=enter_integer("Enter your choice: ")
+        if option==1:
+            country=input("Enter the name of a country: ")
+            write_executable(data_type, "data.get_vaccines_importance_data_per_country('" + country + "')\n", mode)
+            break
+        elif option==2:
+            country=input("Enter the name of a country: ")
+            write_executable(data_type, "data.get_vaccines_safety_data_per_country('" + country + "')\n", mode)
+            break
+        elif option==3:
+            country=input("Enter the name of a country: ")
+            write_executable(data_type, "data.get_vaccines_effectiveness_data_per_country('" + country + "')\n", mode)
+            break
+        else:
+            print("Wrong Choice")
+
 def aux_menu(indicator, dataType, mode):
     while(True):
         print("//////////////////////")
@@ -341,7 +368,6 @@ def aux_menu(indicator, dataType, mode):
         print("//////////////////////")
         option=enter_integer("Enter your choice: ")
         if option==1:
-            #TODO: make sure that the country is correct (Realmente es necesario esto???? Si metes un país que este mal devuelve un df vacio no?)
             country=input("Enter the name of a country: ")
             write_executable(dataType, "data.get_indicator_per_country('" + country + "','" + indicator + "')\n", mode)
             break
@@ -640,6 +666,8 @@ def main():
                 print("4.Male smokers")
                 print("5.Handwashing facilities")
                 print("6.Hospital beds per thousand")
+                print("7.Opion about Vaccines")
+                print("8.Physicians")
                 print("----------------------")
                 option4=enter_integer("Enter the indicator: ")
                 if option4==1:
@@ -664,6 +692,14 @@ def main():
                     break
                 elif option4==6:
                     aux_menu('hospital_beds_per_thousand', 'health', mode)
+                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    break
+                elif option4==7:
+                    aux_menu_vaccines('vaccines', mode)
+                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    break
+                elif option4==8:
+                    aux_menu_physicians('physicians', mode)
                     os.system("spark-submit " + dir + "/scripts/execute.py")
                     break
                 else:
