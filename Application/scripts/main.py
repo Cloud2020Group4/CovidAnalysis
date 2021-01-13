@@ -57,6 +57,7 @@ def write_executable(data_type, to_execute, mode, num_threads_local):
         file.write("shutil.rmtree('" + dir  + "/output', ignore_errors = True, onerror = None)\n")
         file.write("df.coalesce(1).write.format('csv').options(header=True).save('" + dir + "/output')\n")
     elif mode == 'hadoop':
+        file.write("import os\n")
         file.write("os.system('hadoop fs -rm -r output')\n")
         file.write("df.coalesce(1).write.format('csv').options(header=True).save('output')\n")
 
