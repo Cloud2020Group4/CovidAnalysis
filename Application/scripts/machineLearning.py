@@ -17,13 +17,20 @@ class MachineLearning:
         self.spark = sparkSes
         self.dir = dirname(dirname(abspath(__file__)))
         if mode == 'local':
-            self.data_dir = self.dir + "/datasets/owid-covid-data.csv"
+            self.covid_data_dir = self.dir + "/datasets/owid-covid-data.csv"
+            self.vaccine_data_dir = self.dir + "/datasets/vaccine.csv"
+            self.pysicians_data_dir = self.dir + "/datasets/medical_doctors_per_1000_people.csv"
         elif mode == 'hadoop':
-            self.data_dir = "owid-covid-data.csv"
-        self.df_covid_data = self.spark.read.csv(self.data_dir, header = True, inferSchema=True)
+            self.covid_data_dir = "owid-covid-data.csv"
+            self.vaccine_data_dir = "vaccine.csv"
+            self.pysicians_data_dir = "medical_doctors_per_1000_people.csv"
+
+        self.df_covid_data = self.spark.read.csv(self.covid_data_dir, header = True, inferSchema=True)
+        self.df_vaccine_data = self.spark.read.csv(self.vaccine_data_dir, header = True, inferSchema = True)
+        self.df_pysicians_data = self.spark.read.csv(self.pysicians_data_dir, header = True, inferSchema = True)
     
         
-    def transform_dataframe(self, features):
+    def transform_dataframe_covid_data(self, features):
         location_date_features = features + ['location', 'date']
         id_features = features + ['id']
         # Drop the rows that aren't related to a country
@@ -41,10 +48,53 @@ class MachineLearning:
         self.df_location_id = self.df_covid_data.select('id', 'location')
         # Select 'id' and features
         self.df_covid_data = self.df_covid_data.select(id_features)
+    
+    def transform_dataframe_vaccines(self, features_owid, features_vaccines):
+        location_date_features_owid = features_owid + ['location', 'date']
+        # Drop the rows that aren't related to a country
+        self.df_covid_data = self.df_covid_data.where((col("location") != "World") &  (col("location") != "International"))
+        # Select 'location', 'date' and features_owid
+        self.df_covid_data = self.df_covid_data.select(location_date_features_owid)
+        # Delete the rows that have a null value
+        self.df_covid_data = self.df_covid_data.na.drop()
+        # For each country get the latest data
+        df_country_date = self.df_covid_data.groupBy('location').agg(max('date').alias('date')).select('location', 'date')
+        self.df_covid_data = df_country_date.join(self.df_covid_data, ['date', 'location'])
+
+        location_features_vaccines = features_vaccines + ['name']
+        self.df_vaccine_data = self.df_vaccine_data.select(location_features_vaccines)
+        self.df_vaccine_data = self.df_vaccine_data.na.drop()
+        self.df_vaccine_data = self.df_vaccine_data.withColumnRenamed('name', 'location')
+
+        self.df_covid_data = self.df_covid_data.join(self.df_vaccine_data, 'location')
+
+        # Create an id per country
+        window = Window.orderBy(asc('location'))
+        self.df_covid_data = self.df_covid_data.withColumn('id', row_number().over(window))
+        self.df_location_id = self.df_covid_data.select('id', 'location')
+        # Select 'id' and features
+        id_features = features_owid + features_vaccines + ['id']
+        self.df_covid_data = self.df_covid_data.select(id_features)
+    '''
+    # No se me ocurre como hacerla
+    def transform_dataframe_pysicians_data(self, features_owid):
+    ''' 
+
+    def ml_covid_data(self, features):
+        self.transform_dataframe_covid_data(features)
+        return self.main(features, 'covid_gdp_hospital_beds') 
+
+    def ml_vaccines_data(self, features_owid, features_vaccines):
+        self.transform_dataframe_vaccines(features_owid, features_vaccines)
+        features = features_owid + features_vaccines
+        return self.main(features, 'covid_vaccines') 
 
 
-    def main(self, features): 
-        self.transform_dataframe(features)
+
+
+
+
+    def main(self, features, subfolder): 
         df = self.df_covid_data
         for col in df.columns:
             if col in features:
@@ -73,7 +123,7 @@ class MachineLearning:
                 best_k = k
 
         # Plot silhouette value for each k value
-        sil_save_dir = self.dir + '/graphs/ml/shilouette'
+        sil_save_dir = self.dir + '/graphs/ml/' + subfolder + '/shilouette'
         sil_title = 'Silhouette values. Features: '
         for f in features:
             sil_save_dir = sil_save_dir + '_' + f
@@ -101,7 +151,7 @@ class MachineLearning:
                 c = df_final.select('prediction').collect()
                 label_x = features[i]
                 label_y = features[j]
-                save_dir = self.dir + '/graphs/ml/clustering_2d_' + label_x + '_' + label_y + '.png'
+                save_dir = self.dir + '/graphs/ml/' + subfolder + '/clustering_2d_' + label_x + '_' + label_y + '.png'
                 name = 'Clustering with variables ' + label_x + ', ' + label_y
                 self.plot_cluster_2d(x, y, label_x, label_y, c, save_dir, name)
 
@@ -117,7 +167,7 @@ class MachineLearning:
                     label_x = features[i]
                     label_y = features[j]
                     label_z = features[k]
-                    save_dir = self.dir + '/graphs/ml/clustering_3d_' + label_x + '_' + label_y + '_' + label_z + '.png'
+                    save_dir = self.dir + '/graphs/ml/' + subfolder + '/clustering_3d_' + label_x + '_' + label_y + '_' + label_z + '.png'
                     name = 'Clustering with variables ' + label_x + ', ' + label_y + ', ' + label_z
                     self.plot_cluster_3d(x, y, z, label_x, label_y, label_z, c, save_dir, name)
         
