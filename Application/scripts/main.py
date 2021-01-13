@@ -7,17 +7,25 @@ from datetime import datetime
 dir = dirname(dirname(abspath(__file__)))
 
 def download_datasets(mode):
+    print("Downloading dataset...")
     urllib.request.urlretrieve("https://covid.ourworldindata.org/data/owid-covid-data.csv", dir + "/datasets/owid-covid-data.csv")
     if mode == 'hadoop':
         os.system("hadoop fs -put -f "+  dir + "/datasets/owid-covid-data.csv")
 
 
-def write_executable(data_type, to_execute, mode):
+def write_executable(data_type, to_execute, mode, num_threads_local):
     file = open(dir + '/scripts/execute.py','w')
     file.write('import covidData, economicData,populationData, processData, vaccinesData,physiciansData, machineLearning, vaccinesData\n')
     file.write('import shutil\n')
     file.write('from pyspark.sql import SparkSession\n')
-    file.write("spark = SparkSession.builder.appName('CovidAnalysis').master('local').getOrCreate()\n")
+    if mode == 'local':
+        if num_threads_local == 0:
+            str_num_threads_local = '*'
+        else:
+            str_num_treads_local = str(num_threads_local)
+        file.write("spark = SparkSession.builder.appName('CovidAnalysis').master('local[" + str_num_threads_local + "]').getOrCreate()\n")
+    elif mode == 'hadoop':
+         file.write("spark = SparkSession.builder.appName('CovidAnalysis').getOrCreate()\n")
     if data_type=='covid':
         file.write("data = covidData.CovidData(spark, '" + mode + "')\n")
 
@@ -55,7 +63,7 @@ def write_executable(data_type, to_execute, mode):
     file.close() 
 
 def enter_integer(text):
-    val = 0
+    val = -1
     while True:
         try:
             val = int(input(text))       
@@ -63,7 +71,7 @@ def enter_integer(text):
             print("Input value is not an integer!")
             continue
         else:
-            if val > 0:
+            if val >= 0:
                 break 
             else:
                 print("Input is not a possitive integer!")
@@ -207,7 +215,7 @@ def ask_options_covid_data(has_smoothed, has_totals, has_relative, has_plot):
         text = text + ', plot=' + str(plot)
     return text
 
-def write_executable_covid_data(final_option, mode):
+def write_executable_covid_data(final_option, mode, num_threads_local):
     if final_option == '1.1':
         date = enter_date()
         options_text = ask_options_covid_data(True, True, True, False)
@@ -331,9 +339,9 @@ def write_executable_covid_data(final_option, mode):
         options_text = ask_options_covid_data(False, False, True, True)
         func = "data.compare_two_countries_all_months_aggregated('" + country1 + "', '" + country2 + "'" + agg_option + options_text + ")"
     
-    write_executable('covid', func, mode)
+    write_executable('covid', func, mode, num_threads_local)
 
-def aux_menu_vaccines(data_type, mode):
+def aux_menu_vaccines(data_type, mode, num_threads_local):
     while(True):
         print("//////////////////////")
         print("What kind of information do you want?")
@@ -344,20 +352,20 @@ def aux_menu_vaccines(data_type, mode):
         option=enter_integer("Enter your choice: ")
         if option==1:
             country=input("Enter the name of a country: ")
-            write_executable(data_type, "data.get_vaccines_importance_data_per_country('" + country + "')\n", mode)
+            write_executable(data_type, "data.get_vaccines_importance_data_per_country('" + country + "')\n", mode, num_threads_local)
             break
         elif option==2:
             country=input("Enter the name of a country: ")
-            write_executable(data_type, "data.get_vaccines_safety_data_per_country('" + country + "')\n", mode)
+            write_executable(data_type, "data.get_vaccines_safety_data_per_country('" + country + "')\n", mode, num_threads_local)
             break
         elif option==3:
             country=input("Enter the name of a country: ")
-            write_executable(data_type, "data.get_vaccines_effectiveness_data_per_country('" + country + "')\n", mode)
+            write_executable(data_type, "data.get_vaccines_effectiveness_data_per_country('" + country + "')\n", mode, num_threads_local)
             break
         else:
             print("Wrong Choice")
 
-def aux_menu_physicians(data_type, mode):
+def aux_menu_physicians(data_type, mode, num_threads_local):
     while(True):
         print("//////////////////////")
         print("What kind of information do you want?")
@@ -373,7 +381,7 @@ def aux_menu_physicians(data_type, mode):
         if option==1:
             country=input("Enter the name of a country: ")
             year=enter_integer("Enter a year (from 1960 to 2018): ")
-            write_executable(data_type, "data.get_doctors_country_and_year('" + str(year) + "','" + country + "')\n", mode)
+            write_executable(data_type, "data.get_doctors_country_and_year('" + str(year) + "','" + country + "')\n", mode, num_threads_local)
             break
         elif option==2:
             year=enter_integer("Enter a year (from 1960 to 2018): ")
@@ -381,10 +389,10 @@ def aux_menu_physicians(data_type, mode):
             while(True):
                 plot=input("Do you want to plot the results[y/n]?:")
                 if(plot=='y'):
-                    write_executable(data_type, "data.get_top_country(" + str(num_countries) + ",'" + str(year) + "',plot=True)\n", mode)
+                    write_executable(data_type, "data.get_top_country(" + str(num_countries) + ",'" + str(year) + "',plot=True)\n", mode, num_threads_local)
                     break
                 elif(plot=='n'):
-                    write_executable(data_type, "data.get_top_country(" + str(num_countries) + ",'" + str(year) + "')\n", mode)
+                    write_executable(data_type, "data.get_top_country(" + str(num_countries) + ",'" + str(year) + "')\n", mode, num_threads_local)
                     break
                 else:
                     print("Wrong answer")
@@ -396,10 +404,10 @@ def aux_menu_physicians(data_type, mode):
             while(True):
                 plot=input("Do you want to plot the results[y/n]?:")
                 if(plot=='y'):
-                    write_executable(data_type, "data.get_bottom_country(" + str(num_countries) + ",'" + str(year) + "',plot=True)\n", mode)
+                    write_executable(data_type, "data.get_bottom_country(" + str(num_countries) + ",'" + str(year) + "',plot=True)\n", mode, num_threads_local)
                     break
                 elif(plot=='n'):
-                    write_executable(data_type, "data.get_bottom_country(" + str(num_countries) + ",'" + str(year) + "')\n", mode)
+                    write_executable(data_type, "data.get_bottom_country(" + str(num_countries) + ",'" + str(year) + "')\n", mode, num_threads_local)
                     break
                 else:
                     print("Wrong answer")
@@ -407,7 +415,7 @@ def aux_menu_physicians(data_type, mode):
             break
         elif option==4:
             year=enter_integer("Enter a year (from 1960 to 2018): ")
-            write_executable(data_type, "data.get_avg_year('" + str(year)+ "')\n", mode)
+            write_executable(data_type, "data.get_avg_year('" + str(year)+ "')\n", mode, num_threads_local)
             break
         elif option==5:
             continent=input("Enter the name of a continent: ")
@@ -416,10 +424,10 @@ def aux_menu_physicians(data_type, mode):
             while(True):
                 plot=input("Do you want to plot the results[y/n]?:")
                 if(plot=='y'):
-                    write_executable(data_type, "data.get_top_country_continent(" + str(num_countries) +",'" + str(year) +"','" + continent + "',plot=True)\n", mode)
+                    write_executable(data_type, "data.get_top_country_continent(" + str(num_countries) +",'" + str(year) +"','" + continent + "',plot=True)\n", mode, num_threads_local)
                     break
                 elif(plot=='n'):
-                    write_executable(data_type, "data.get_top_country_continent(" + str(num_countries) +",'" + str(year) +"','" + continent +"')\n", mode)
+                    write_executable(data_type, "data.get_top_country_continent(" + str(num_countries) +",'" + str(year) +"','" + continent +"')\n", mode, num_threads_local)
                     break
                 else:
                     print("Wrong answer")
@@ -432,10 +440,10 @@ def aux_menu_physicians(data_type, mode):
             while(True):
                 plot=input("Do you want to plot the results[y/n]?:")
                 if(plot=='y'):
-                    write_executable(data_type, "data.get_bottom_country_continent(" + str(num_countries) +",'" + str(year) +"','" + continent + "',plot=True)\n", mode)
+                    write_executable(data_type, "data.get_bottom_country_continent(" + str(num_countries) +",'" + str(year) +"','" + continent + "',plot=True)\n", mode, num_threads_local)
                     break
                 elif(plot=='n'):
-                    write_executable(data_type, "data.get_bottom_country_continent(" + str(num_countries) +",'" + str(year) +"','" + continent +"')\n", mode)
+                    write_executable(data_type, "data.get_bottom_country_continent(" + str(num_countries) +",'" + str(year) +"','" + continent +"')\n", mode, num_threads_local)
                     break
                 else:
                     print("Wrong answer")
@@ -444,12 +452,12 @@ def aux_menu_physicians(data_type, mode):
         elif option==7:
             continent=input("Enter the name of a continent: ")
             year=input("Enter a year (from 1960 to 2018): ")
-            write_executable(data_type, "data.get_avg_year_continent('"+ str(year) + "','" + continent + "')\n", mode)
+            write_executable(data_type, "data.get_avg_year_continent('"+ str(year) + "','" + continent + "')\n", mode, num_threads_local)
             break
         else:
             print("Wrong Choice")
 
-def aux_menu(indicator, dataType, mode):
+def aux_menu(indicator, dataType, mode, num_threads_local):
     while(True):
         print("//////////////////////")
         print("What kind of information do you want?")
@@ -464,20 +472,20 @@ def aux_menu(indicator, dataType, mode):
         option=enter_integer("Enter your choice: ")
         if option==1:
             country=input("Enter the name of a country: ")
-            write_executable(dataType, "data.get_indicator_per_country('" + country + "','" + indicator + "')\n", mode)
+            write_executable(dataType, "data.get_indicator_per_country('" + country + "','" + indicator + "')\n", mode, num_threads_local)
             break
         elif option==2:
-            write_executable(dataType, "data.get_indicator_all_countries('" + indicator + "')\n", mode)
+            write_executable(dataType, "data.get_indicator_all_countries('" + indicator + "')\n", mode, num_threads_local)
             break
         elif option==3:
             num_countries=enter_integer("Enter the number of countries you want on your top: ")
             while(True):
                 plot=input("Do you want to plot the results[y/n]?:")
                 if(plot=='y'):
-                    write_executable(dataType, "data.get_countries_with_highest_indicator(" + str(num_countries) + ",'" + indicator + "',plot=True)\n", mode)
+                    write_executable(dataType, "data.get_countries_with_highest_indicator(" + str(num_countries) + ",'" + indicator + "',plot=True)\n", mode, num_threads_local)
                     break
                 elif(plot=='n'):
-                    write_executable(dataType, "data.get_countries_with_highest_indicator(" + str(num_countries) + ",'" + indicator + "')\n", mode)
+                    write_executable(dataType, "data.get_countries_with_highest_indicator(" + str(num_countries) + ",'" + indicator + "')\n", mode, num_threads_local)
                     break
                 else:
                     print("Wrong answer")
@@ -487,10 +495,10 @@ def aux_menu(indicator, dataType, mode):
             while(True):
                 plot=input("Do you want to plot the results[y/n]?:")
                 if(plot=='y'):
-                    write_executable(dataType, "data.get_countries_with_lowest_indicator(" + str(num_countries) + ",'" + indicator + "',plot=True)\n", mode)
+                    write_executable(dataType, "data.get_countries_with_lowest_indicator(" + str(num_countries) + ",'" + indicator + "',plot=True)\n", mode, num_threads_local)
                     break
                 elif(plot=='n'):
-                    write_executable(dataType, "data.get_countries_with_lowest_indicator(" + str(num_countries) + ",'" + indicator + "')\n", mode)
+                    write_executable(dataType, "data.get_countries_with_lowest_indicator(" + str(num_countries) + ",'" + indicator + "')\n", mode, num_threads_local)
                     break
                 else:
                     print("Wrong answer")
@@ -499,10 +507,10 @@ def aux_menu(indicator, dataType, mode):
             while(True):
                 plot=input("Do you want to plot the results[y/n]?:")
                 if(plot=='y'):
-                    write_executable(dataType, "data.get_indicator_by_continent('" +  indicator + "',plot=True)\n", mode)
+                    write_executable(dataType, "data.get_indicator_by_continent('" +  indicator + "',plot=True)\n", mode, num_threads_local)
                     break
                 elif(plot=='n'):
-                    write_executable(dataType, "data.get_indicator_by_continent('" + indicator + "')\n", mode)
+                    write_executable(dataType, "data.get_indicator_by_continent('" + indicator + "')\n", mode, num_threads_local)
                     break
                 else:
                     print("Wrong answer")
@@ -512,10 +520,10 @@ def aux_menu(indicator, dataType, mode):
             while(True):
                 plot=input("Do you want to plot the results[y/n]?:")
                 if(plot=='y'):
-                    write_executable(dataType, "data.get_countries_with_highest_indicator_per_continent(" + str(num_countries) + ",'" + indicator + "',plot=True)\n", mode)
+                    write_executable(dataType, "data.get_countries_with_highest_indicator_per_continent(" + str(num_countries) + ",'" + indicator + "',plot=True)\n", mode, num_threads_local)
                     break
                 elif(plot=='n'):
-                    write_executable(dataType, "data.get_countries_with_highest_indicator_per_continent(" + str(num_countries) + ",'" + indicator + "')\n", mode)
+                    write_executable(dataType, "data.get_countries_with_highest_indicator_per_continent(" + str(num_countries) + ",'" + indicator + "')\n", mode, num_threads_local)
                     break
                 else:
                     print("Wrong answer")
@@ -525,18 +533,36 @@ def aux_menu(indicator, dataType, mode):
             while(True):
                 plot=input("Do you want to plot the results[y/n]?:")
                 if(plot=='y'):
-                    write_executable(dataType, "data.get_countries_with_lowest_indicator_per_continent(" + str(num_countries) + ",'" + indicator + "',plot=True)\n", mode)
+                    write_executable(dataType, "data.get_countries_with_lowest_indicator_per_continent(" + str(num_countries) + ",'" + indicator + "',plot=True)\n", mode, num_threads_local)
                     break
                 elif(plot=='n'):
-                    write_executable(dataType, "data.get_countries_with_lowest_indicator_per_continent(" + str(num_countries) + ",'" + indicator + "')\n", mode)
+                    write_executable(dataType, "data.get_countries_with_lowest_indicator_per_continent(" + str(num_countries) + ",'" + indicator + "')\n", mode, num_threads_local)
                     break
                 else:
                     print("Wrong answer")
             break
         else:
             print("Wrong Choice")
+
+def execute_spark_submit(mode, num_executors, executor_cores):
+    if mode == 'local' :
+        os.system("spark-submit " + dir + "/scripts/execute.py")
+    elif mode == 'hadoop':
+        command = "spark-submit"
+        if num_executors > 0:
+            command = command + " --num-executors " + str(num_executors)
+            print('Runing spark with ' + str(num_executors) + ' working nodes')
+        if executor_cores > 0:
+            command = command + " --executor-cores " + str(executor_cores)
+            print('Runing spark with ' + str(executor_cores) + ' cores per node')
+        command = command + " " + dir + "/scripts/execute.py"
+        os.system(command)
+
     
 def main():
+    num_executors = -1
+    executor_cores = -1
+    num_threads_local = -1
     while(True):
         print("**********************")
         print("Where are you executing the application?")
@@ -546,6 +572,10 @@ def main():
         mode_op = enter_integer("Enter an option: ")
         if mode_op == 1:
             mode = 'hadoop'
+            print("Configure the system parallelism when running spark-submit")
+            num_executors = enter_integer("Select the value for the flag --num-executors (0 if you don't want to set it): ")
+            executor_cores = enter_integer("Select the value for the flag --executor-cores (0 if you don't want to set it): ")
+            
             # Load datasets to HDFS
             if ask_yes_no_option_covid_data("Do you want to upload the datasets to Hadoop File System? (you must do it the first time you run the application)[y/n]: "):
                 print("Updating datasets to Hadoop File System...")
@@ -557,6 +587,9 @@ def main():
             break
         elif mode_op == 2:
             mode = 'local'
+            print("Select desired level of system parallelism, that is, the number of threads that you want to create")
+            print("Enter 0 if you want to run spark with as many worker threads as logical cores on your machine")
+            num_threads_local = enter_integer("Enter a number: ")
             break
         else:
             print('Wrong answer')
@@ -685,8 +718,9 @@ def main():
                         else:
                             print("Wrong answer")
                     break
-            write_executable_covid_data(final_option, mode)
-            os.system("spark-submit " + dir + "/scripts/execute.py")
+            write_executable_covid_data(final_option, mode, num_threads_local)
+
+            execute_spark_submit(mode, num_executors, executor_cores)
         
         elif choice==3:
             while(True):
@@ -698,16 +732,16 @@ def main():
                 print("----------------------")
                 option2=enter_integer("Enter the indicator: ")
                 if option2==1:
-                    aux_menu('gdp_per_capita', 'economy', mode)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    aux_menu('gdp_per_capita', 'economy', mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option2==2:
-                    aux_menu('extreme_poverty', 'economy', mode)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    aux_menu('extreme_poverty', 'economy', mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option2==3:
-                    aux_menu('human_development_index', 'economy', mode)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    aux_menu('human_development_index', 'economy', mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 else:
                     print("Wrong Choice")
@@ -726,28 +760,28 @@ def main():
                 print("----------------------")
                 option3=enter_integer("Enter the indicator: ")
                 if option3==1:
-                    aux_menu('population', 'population', mode)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    aux_menu('population', 'population', mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option3==2:
-                    aux_menu('population_density', 'population', mode)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    aux_menu('population_density', 'population', mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option3==3:
-                    aux_menu('median_age', 'population', mode)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    aux_menu('median_age', 'population', mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option3==4:
-                    aux_menu('aged_65_older', 'population', mode)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    aux_menu('aged_65_older', 'population', mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option3==5:
-                    aux_menu('aged_70_older', 'population', mode)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    aux_menu('aged_70_older', 'population', mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option3==6:
-                    aux_menu('life_expectancy', 'population', mode)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    aux_menu('life_expectancy', 'population', mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 else:
                     print("Wrong Choice")
@@ -767,36 +801,36 @@ def main():
                 print("----------------------")
                 option4=enter_integer("Enter the indicator: ")
                 if option4==1:
-                    aux_menu('cardiovasc_death_rate', 'health', mode)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    aux_menu('cardiovasc_death_rate', 'health', mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option4==2:
-                    aux_menu('diabetes_prevalence', 'health', mode)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    aux_menu('diabetes_prevalence', 'health', mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option4==3:
-                    aux_menu('female_smokers', 'health', mode)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    aux_menu('female_smokers', 'health', mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option4==4:
-                    aux_menu('male_smokers', 'health', mode)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    aux_menu('male_smokers', 'health', mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option4==5:
-                    aux_menu('handwashing_facilities', 'health', mode)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    aux_menu('handwashing_facilities', 'health', mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option4==6:
-                    aux_menu('hospital_beds_per_thousand', 'health', mode)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    aux_menu('hospital_beds_per_thousand', 'health', mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option4==7:
-                    aux_menu_vaccines('vaccines', mode)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    aux_menu_vaccines('vaccines', mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option4==8:
-                    aux_menu_physicians('physicians', mode)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    aux_menu_physicians('physicians', mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 else:
                     print("Wrong Choice")
@@ -809,12 +843,12 @@ def main():
                 print("----------------------")
                 option6=enter_integer("Choose the indicators you want to use when clustering: ")
                 if option6==1:
-                    write_executable('machineLearning', "data.ml_covid_data(['total_deaths_per_million', 'total_cases_per_million', 'gdp_per_capita', 'hospital_beds_per_thousand'])", mode)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    write_executable('machineLearning', "data.ml_covid_data(['total_deaths_per_million', 'total_cases_per_million', 'gdp_per_capita', 'hospital_beds_per_thousand'])", mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option6 == 2:
-                    write_executable('machineLearning', "data.ml_vaccines_data(['total_deaths_per_million', 'total_cases_per_million'], ['Vaccine importance, Strongly agree (%)', 'Vaccine safety,Strongly agree (%)'])", mode)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    write_executable('machineLearning', "data.ml_vaccines_data(['total_deaths_per_million', 'total_cases_per_million'], ['Vaccine importance, Strongly agree (%)', 'Vaccine safety,Strongly agree (%)'])", mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
 
                 else: 
