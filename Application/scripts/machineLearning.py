@@ -75,10 +75,39 @@ class MachineLearning:
         # Select 'id' and features
         id_features = features_owid + features_vaccines + ['id']
         self.df_covid_data = self.df_covid_data.select(id_features)
-    '''
-    # No se me ocurre como hacerla
-    def transform_dataframe_pysicians_data(self, features_owid):
-    ''' 
+    
+    def transform_dataframe_physicians_data(self, features_owid):
+        location_date_features_owid = features_owid + ['location', 'date']
+        # Drop the rows that aren't related to a country
+        self.df_covid_data = self.df_covid_data.where((col("location") != "World") &  (col("location") != "International"))
+        # Select 'location', 'date' and features_owid
+        self.df_covid_data = self.df_covid_data.select(location_date_features_owid)
+        # Delete the rows that have a null value
+        self.df_covid_data = self.df_covid_data.na.drop()
+        # For each country get the latest data
+        df_country_date = self.df_covid_data.groupBy('location').agg(max('date').alias('date')).select('location', 'date')
+        self.df_covid_data = df_country_date.join(self.df_covid_data, ['date', 'location'])
+
+        country_physicians = []
+        for row in self.df_pysicians_data.rdd.collect():
+            for year in range(2018, 1960, -1):
+                if not (row[str(year)] in (None, "")):
+                    country_physicians = country_physicians + [(row['country'], row[str(year)])]
+                    break
+        
+        df_aux = self.spark.createDataFrame(country_physicians, ['location', 'physicians_per_thousand'])
+        df_aux = df_aux.na.drop()
+        self.df_covid_data = df_aux.join(self.df_covid_data, 'location')
+
+        # Create an id per country
+        window = Window.orderBy(asc('location'))
+        self.df_covid_data = self.df_covid_data.withColumn('id', row_number().over(window))
+        self.df_location_id = self.df_covid_data.select('id', 'location')
+        # Select 'id' and features
+        id_features = features_owid + ['physicians_per_thousand', 'id']
+        self.df_covid_data = self.df_covid_data.na.drop()
+        self.df_covid_data = self.df_covid_data.select(id_features)
+
 
     def ml_covid_data(self, features):
         self.transform_dataframe_covid_data(features)
@@ -89,9 +118,10 @@ class MachineLearning:
         features = features_owid + features_vaccines
         return self.main(features, 'covid_vaccines') 
 
-
-
-
+    def ml_physicians_data(self, features_owid):
+        self.transform_dataframe_physicians_data(features_owid)
+        features = features_owid + ['physicians_per_thousand']
+        return self.main(features, 'covid_physicians')
 
 
     def main(self, features, subfolder): 
@@ -101,8 +131,7 @@ class MachineLearning:
                 df = df.withColumn(col,df[col].cast('float'))
         vecAssembler = VectorAssembler(inputCols=features, outputCol="features")
         df = vecAssembler.transform(df).select('id', 'features')
-
-  
+        
         # Calculate the best value for k 
         best_k = -1
         best_silhouette = -1
