@@ -4,6 +4,7 @@ from pyspark.ml.feature import VectorAssembler
 from os.path import dirname, abspath
 from pyspark.ml.feature import VectorAssembler
 from pyspark.sql import Window
+from pyspark.ml.feature import StandardScaler
 from pyspark.sql.functions import col, row_number, max, asc
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -131,14 +132,18 @@ class MachineLearning:
                 df = df.withColumn(col,df[col].cast('float'))
         vecAssembler = VectorAssembler(inputCols=features, outputCol="features")
         df = vecAssembler.transform(df).select('id', 'features')
-        
+        scaler = StandardScaler(inputCol="features", outputCol="scaledFeatures",
+                        withStd=True, withMean=False)
+        model = scaler.fit(df)
+        df = model.transform(df)
+
         # Calculate the best value for k 
         best_k = -1
         best_silhouette = -1
         silhouette_values = []
         for k in range(2, 10):
             
-            kmeans = KMeans().setK(k).setSeed(1).setFeaturesCol("features")
+            kmeans = KMeans().setK(k).setSeed(1).setFeaturesCol("scaledFeatures")
             model = kmeans.fit(df)
 
             # Make predictions

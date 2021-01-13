@@ -839,7 +839,7 @@ def main():
                     break
                 else:
                     print("Wrong Choice")
-       elif choice==6:
+        elif choice==6:
             while(True):
                 print("----------------------")
                 print("Machine Learning Menu")
@@ -849,15 +849,15 @@ def main():
                 print("----------------------")
                 option6=enter_integer("Choose the indicators you want to use when clustering: ")
                 if option6==1:
-                    write_executable('machineLearning', "data.ml_covid_data(['total_deaths_per_million', 'total_cases_per_million', 'gdp_per_capita', 'hospital_beds_per_thousand'])", mode)
+                    write_executable('machineLearning', "data.ml_covid_data(['total_deaths_per_million', 'total_cases_per_million', 'gdp_per_capita', 'hospital_beds_per_thousand'])", mode, num_threads_local)
                     os.system("spark-submit " + dir + "/scripts/execute.py")
                     break
                 elif option6 == 2:
-                    write_executable('machineLearning', "data.ml_vaccines_data(['total_deaths_per_million', 'total_cases_per_million'], ['Vaccine importance, Strongly agree (%)', 'Vaccine safety,Strongly agree (%)'])", mode)
+                    write_executable('machineLearning', "data.ml_vaccines_data(['total_deaths_per_million', 'total_cases_per_million'], ['Vaccine importance, Strongly agree (%)', 'Vaccine safety,Strongly agree (%)'])", mode, num_threads_local)
                     os.system("spark-submit " + dir + "/scripts/execute.py")
                     break
                 elif option6 == 3:
-                    write_executable('machineLearning', "data.ml_physicians_data(['total_deaths_per_million', 'total_cases_per_million'])", mode)
+                    write_executable('machineLearning', "data.ml_physicians_data(['total_deaths_per_million', 'total_cases_per_million'])", mode, num_threads_local)
                     os.system("spark-submit " + dir + "/scripts/execute.py")
                     break
 
