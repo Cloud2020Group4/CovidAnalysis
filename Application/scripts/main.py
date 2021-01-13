@@ -547,12 +547,13 @@ def main():
         if mode_op == 1:
             mode = 'hadoop'
             # Load datasets to HDFS
-            print("Updating datasets to Hadoop File System...")
-            os.system("hadoop fs -put -f "+  dir + "/datasets/owid-covid-data.csv")
-            os.system("hadoop fs -put -f "+  dir + "/datasets/vaccine.csv")
-            os.system("hadoop fs -put -f "+  dir + "/datasets/medical_doctors_per_1000_people.csv")
-            os.system("hadoop fs -put -f "+  dir + "/datasets/countries.csv")
-            print("Updating ended...")
+            if ask_yes_no_option_covid_data("Do you want to upload the datasets to Hadoop File System? (you must do it the first time you run the application)[y/n]: "):
+                print("Updating datasets to Hadoop File System...")
+                os.system("hadoop fs -put -f "+  dir + "/datasets/owid-covid-data.csv")
+                os.system("hadoop fs -put -f "+  dir + "/datasets/vaccine.csv")
+                os.system("hadoop fs -put -f "+  dir + "/datasets/medical_doctors_per_1000_people.csv")
+                os.system("hadoop fs -put -f "+  dir + "/datasets/countries.csv")
+                print("Updating ended...")
             break
         elif mode_op == 2:
             mode = 'local'
