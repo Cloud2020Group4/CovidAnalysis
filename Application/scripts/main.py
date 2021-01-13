@@ -61,7 +61,7 @@ def write_executable(data_type, to_execute, mode, num_threads_local):
         file.write("os.system('hadoop fs -rm -r output')\n")
         file.write("df.coalesce(1).write.format('csv').options(header=True).save('output')\n")
         # Get the output file from HDFS
-        if ask_yes_no_option_covid_data("Do you want to get the output from HDFS when the execution finish?[y/n]: ")
+        if ask_yes_no_option_covid_data("Do you want to get the output from HDFS when the execution finish?[y/n]: "):
             file.write("shutil.rmtree('" + dir  + "/output', ignore_errors = True, onerror = None)\n")
             file.write("os.system('hadoop fs -get output " + dir + "')\n")
 
