@@ -11,13 +11,14 @@ class PhysiciansData:
     #from pyspark.sql import SparkSession
     #spark = SparkSession.builder.appName('CovidAnalysis').master('local').getOrCreate()
     #phys = physicians.Physicians(spark)
-    def __init__(self, sparkSes, mode):
+    def __init__(self, sparkSes, mode, output_dir):
         self.spark = sparkSes
-        self.dir = dirname(dirname(abspath(__file__)))
+        self.dir_script = dirname(dirname(abspath(__file__)))
+        self.dir = output_dir
 
         if mode == 'local':
-            self.data_dir_pysicians = self.dir + '/datasets/medical_doctors_per_1000_people.csv'
-            self.data_dir_continents = self.dir + '/datasets/countries.csv'
+            self.data_dir_pysicians = self.dir_script + '/datasets/medical_doctors_per_1000_people.csv'
+            self.data_dir_continents = self.dir_script + '/datasets/countries.csv'
         elif mode == 'hadoop':
             self.data_dir_pysicians = 'medical_doctors_per_1000_people.csv'
             self.data_dir_continents = 'countries.csv'

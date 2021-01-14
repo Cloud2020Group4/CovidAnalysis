@@ -14,6 +14,17 @@ def download_datasets(mode):
 
 
 def write_executable(data_type, to_execute, mode, num_threads_local):
+    # Create global output directory
+    output_directory = dir + "/saved_outputs"
+    if not os.path.exists(output_directory):
+        os.mkdir(output_directory)
+    
+    now = datetime.now()
+    dt_string = now.strftime("%d-%m-%Y_%H-%M-%S")
+    results_dir = output_directory + '/results_' + dt_string
+    os.mkdir(results_dir)
+    os.mkdir(results_dir + '/graphs')
+
     file = open(dir + '/scripts/execute.py','w')
     file.write('import covidData, economicData,populationData, processData, vaccinesData,physiciansData, machineLearning, vaccinesData\n')
     file.write('import shutil\n')
@@ -27,25 +38,25 @@ def write_executable(data_type, to_execute, mode, num_threads_local):
     elif mode == 'hadoop':
          file.write("spark = SparkSession.builder.appName('CovidAnalysis').getOrCreate()\n")
     if data_type=='covid':
-        file.write("data = covidData.CovidData(spark, '" + mode + "')\n")
+        file.write("data = covidData.CovidData(spark, '" + mode + "', '" + results_dir + "')\n")
 
     elif data_type=='economy':
-        file.write("data = processData.ProcessData(spark, '" + mode + "')\n")
+        file.write("data = processData.ProcessData(spark, '" + mode + "', '" + results_dir + "')\n")
         
     elif data_type=='population':
-        file.write("data = processData.ProcessData(spark, '" + mode + "')\n")
+        file.write("data = processData.ProcessData(spark, '" + mode + "', '" + results_dir + "')\n")
         
     elif data_type=='health':
-        file.write("data = processData.ProcessData(spark, '" + mode + "')\n")
+        file.write("data = processData.ProcessData(spark, '" + mode + "', '" + results_dir + "')\n")
 
     elif data_type=='vaccines':
-        file.write("data = vaccinesData.VaccinesData(spark, '" + mode + "')\n")
+        file.write("data = vaccinesData.VaccinesData(spark, '" + mode + "', '" + results_dir + "')\n")
     
     elif data_type=='physicians':
-        file.write("data = physiciansData.PhysiciansData(spark, '" + mode + "')\n")
+        file.write("data = physiciansData.PhysiciansData(spark, '" + mode + "', '" + results_dir + "')\n")
 
     elif data_type=='machineLearning':
-        file.write("data = machineLearning.MachineLearning(spark, '" + mode + "')\n")
+        file.write("data = machineLearning.MachineLearning(spark, '" + mode + "', '" + results_dir + "')\n")
 
     file.write('df =' + to_execute + '\n')
 
@@ -53,25 +64,19 @@ def write_executable(data_type, to_execute, mode, num_threads_local):
     file.write('df.show()' + '\n')
     
     # Print dataframe to file
-    now = datetime.now()
-    dt_string = now.strftime("%d-%m-%Y_%H-%M-%S")
-    output_directory = dir + "/saved_outputs"
-    if not os.path.exists(output_directory):
-        os.mkdir(output_directory)
-
-    output_dir = output_directory + "/output_" + dt_string
+    output_dir = results_dir + '/output'
     if mode == 'local':
         file.write("shutil.rmtree('" + output_dir + "', ignore_errors = True, onerror = None)\n")
-        file.write("df.coalesce(1).write.format('csv').options(header=True).save('" + output_dir + "/output')\n")
+        file.write("df.coalesce(1).write.format('csv').options(header=True).save('" + output_dir + "')\n")
     elif mode == 'hadoop':
-        output_dir_hdfs = "output_" + dt_string
+        output_dir_hdfs = "output"
         file.write("import os\n")
         file.write("os.system('hadoop fs -rm -r " + output_dir_hdfs + "')\n")
         file.write("df.coalesce(1).write.format('csv').options(header=True).save('" + output_dir_hdfs + "')\n")
         # Get the output file from HDFS
         if ask_yes_no_option_covid_data("Do you want to get the output from HDFS when the execution finish?[y/n]: "):
             file.write("shutil.rmtree('" + output_dir  + "', ignore_errors = True, onerror = None)\n")
-            file.write("os.system('hadoop fs -get " + output_dir_hdfs + " " + output_directory + "')\n")
+            file.write("os.system('hadoop fs -get " + output_dir_hdfs + " " + results_dir + "')\n")
 
     file.close() 
 
@@ -882,15 +887,15 @@ def main():
                 option6=enter_integer("Choose the indicators you want to use when clustering: ")
                 if option6==1:
                     write_executable('machineLearning', "data.ml_covid_data(['total_deaths_per_million', 'total_cases_per_million', 'gdp_per_capita', 'hospital_beds_per_thousand'])", mode, num_threads_local)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option6 == 2:
                     write_executable('machineLearning', "data.ml_vaccines_data(['total_deaths_per_million', 'total_cases_per_million'], ['Vaccine importance, Strongly agree (%)', 'Vaccine safety,Strongly agree (%)'])", mode, num_threads_local)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option6 == 3:
                     write_executable('machineLearning', "data.ml_physicians_data(['total_deaths_per_million', 'total_cases_per_million'])", mode, num_threads_local)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
 
                 else: 
