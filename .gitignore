@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 saved_outputs/
-scripts/execute.py
+execute.py
