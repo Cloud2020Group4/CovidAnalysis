@@ -98,16 +98,157 @@
                                     
                                 <hr>
 
-                                <h2><header>¿Cómo se Ejecuta?</header></h2>
-                                <p>hola</p>
                                 
-                                <hr>
+                                <h2><header>¿Cómo se Ejecuta?</header></h2>
+                                <center>Selecciona "MODO LOCAL" o "CLUSTER DE HADOOP EN AWS"</center>
+                                <h3 id="local" onclicK="toggleLocal()" class="button small fit"> Modo LOCAL</h3>
+                                <div id="menu-box-local" style="display:none">
 
-                                 <p>hola</p>
+                                    <h3>Requisitos</h3>
+                                        <div align ="left">
+                                            
+                                            <blockquote>
+                                                <li>Tener Spark, Java, Python y Scala instalado en nuestra máquina. Si se quiere usar la parte de machine learning es necesario instalar spark-3.0.1</li>
 
-                                <hr>
+                                            <dl>                                           
+                                                <li>Tener descargada la biblioteca matplotlib de Python estándar</li>
+                                            <dd>
+                                                Esta biblioteca se puede descargar con el comando $pip install matplotlib
+                                            </dd>
+                                            
+                                            <dl>
+                                                <li>Exportar la variable PYSPARK_PYTHON con la ruta de la instalación local de python.
+                                            <dd>
+                                                Esto se puede hacer, por ejemplo, con 
+                                                $export PYSPARK_PYTHON=”/usr/bin/python”
 
-                                <p>hola</p>
+                                                Para no tener que hacer esto cada vez que usemos la aplicación, podemos guardar su valor en el archivo de configuración ~/.profile, añadiendo la línea anterior al final del mismo y ejecutando $source ~/.profile para añadir los cambios.
+                                            </dd>        
+                                            </dl>
+
+                                             </blockquote>
+
+                                        </div>
+
+                                    <h3>Ejecutar la Aplicación</h3>
+                                        <div align ="left">
+                                            <blockquote>
+                                                La aplicación se ejecuta como un script estándar de python. El script que ejecutaremos será main.py,
+                                                que se encuentra en la ruta Application/scripts/main.py<br>
+
+                                                Este script nos mostrará un menú en el que seleccionaremos qué funcionalidad queremos ejecutar y se nos pedirán todos los parámetros y datos
+                                                necesarios para ejecutar la misma.<br>
+
+                                                El propio ejecutable de python creará un fichero execute.py, con el código en python para ejecutar la tarea requerida en spark, en la misma
+                                                ruta en la que estaba main.py, y también el propio ejecutable ejecutará el comando spark-submit execute.py, por lo que no hay que preocuparse de nada
+                                                que no sea ejecutar main.py y elegir las opciones deseadas.<br>
+
+                                                Nada más ejecutar la aplicación se nos mostrará un primer menú en el que debemos elegir dónde estamos ejecutando la aplicación, en este caso, introducimos un 2.<br>
+                                               <center> <img src="images/local1.jpg"></center>
+
+                                               Seguidamente nos pedirá que introduzcamos el paralelismo a nivel de sistema que queremos darle a nuestra aplicación. Podemos elegir entre introducir el número de threads que queremos crear ( .master(‘local[n]’)
+                                               para un n introducido por pantalla o usar tantos threads como núcleos lógicos tenga nuestra máquina (.master(‘local[*]’))<br> 
+                                                Una vez elegido este parámetro aparece el menú principal, en el que se reflejan todas las funcionalidades de nuestra aplicación.
+                                                <center> <img src="images/local2.jpg"></center>  
+                                                
+                                                La aplicación usa un dataset con información sobre covid-19 en el mundo que se actualiza cada día. La aplicación viene con un dataset con datos hasta una determinada fecha, pero si en el momento de la ejecución se quiere contar con los últimos datos actualizados, es necesario ejecutar la opción 1, 
+                                                que nos descargará desde
+                                                 <a href=https://covid.ourworldindata.org/data" >https://covid.ourworldindata.org/data </a>el dataset owid-covid-data.csv con los datos más recientes disponibles y será el que use en la ejecución de la aplicación.<br>
+
+                                                Las opciones 2-6 permiten acceder a las distintas funcionalidades con las que contamos en nuestra aplicación.
+
+                                            </blockquote>
+                                        </div>
+
+                                        
+
+                                </div>
+
+                                <h3 id="local" onclicK="toggleCluster()" class="button small fit"> CLUSTER DE HADOOP EN AWS</h3>
+                                <div id="menu-box-cluster" style="display:none">
+
+                                    
+                                    <h3>Requisitos</h3>
+                                        <div align ="left">
+                                            
+                                            <blockquote>
+                                            <dl>
+                                                <li>En primer lugar, debemos lanzar un cluster con Spark como aplicación. Si queremos ejecutar las funcionalidades de Machine Learning es necesario que el cluster tenga instalado Spark-3.0.1. Para ello seleccionamos:</li>
+
+                                            <dd>
+                                                Release: emr-6.2.0
+                                            </dd>
+                                            <dd>
+                                                Applications: Spark
+    
+                                            </dd>
+
+                                            </dl>
+                                                <li>Ejemplo de configuración de Cluster en el que funcionan todas la utilidades de nuestra aplicación.</li>
+                                                <center><img src="images/cluster1.jpg"></center>
+                                                
+                                                <p>Una vez hayamos conectado con el cluster es necesario:
+                                                </p>
+                                                <ol>
+                                                    <li>Instalar la biblioteca matplotlib de Python. Para hacerlo, ejecutamos </li>
+                                                        <code>
+                                                            $ sudo pip3 install matplotlib
+                                                        </code>
+                                                    <li>
+                                                        Exportar la variable PYSPARK_PYTHON. Para ello, ejecutamos:
+                                                    </li>
+                                                        <code>
+                                                            $export PYSPARK_PYTHON=”/usr/bin/python3”
+                                                        </code>
+                                                    <li>
+                                                        Enviar la aplicación al cluster. Se puede utilizar scp o clonar el repositorio Github. Para ello es necesario instalar el comando git. Ejecutamos:
+                                                    </li>
+                                                        <code>
+                                                            $ sudo yum install git
+                                                        </code>
+                                                    <p>Desde la carpeta en la queramos crear el proyecto ejecutamos:<br>
+                                                        <code> $ git clone https://github.com/Cloud2020Group4/CovidAnalysis.git</code>
+                                                    </p>
+                                                    
+                                                       
+                                                    </code>
+                                                </ol>
+
+
+
+                                             </blockquote>
+
+                                        </div>
+
+                                    <h3>Ejecutar la Aplicacion</h3>
+                                    <div align ="center">
+                                        <blockquote>
+                                        <p> Al igual que en modo local, para ejecutar la aplicación sólo tenemos que ejecutar el script de python main.py (Application/scripts/main.py)
+                                                y este nos generará un ejecutable con el código para ejecutar en spark lo necesario para llevar a cabo la funcionalidad especificada en el menú.</p>
+                                            
+                                        <p>En el primer menú que se nos muestra cuando ejecutamos la aplicación, seleccionamos la opción 1 (Hadoop Cluster). A continuación se nos pedirán los
+                                            parámetros de paralelismo a nivel de sistema que queremos para nuestra aplicación, introduciendo los valores de --num-executors (número de nodos
+                                            ejecutores, es de decir, de instancias de nuestro cluster que queremos poner a trabajar) y --executor-cores (él número de hilos que ejecutará cada
+                                            nodo, y que no debe ser mayor al número de procesadores lógicos de las instancias del clúster. Por ejemplo, en la configuración anterior, al usar
+                                                instancias m4.large no podemos dar un valor superior a 4 al número de cores por ejecutor.</p>
+                                                <center><img src="images/cluster2.jpg"></center>
+
+                                        <p>
+                                            Como el spark trabaja sobre el Hadoop File System, los archivos que va a leer tienen que estar cargados en el mismo, 
+                                            lo cual podemos hacer manuelamente antes de ejecutar la aplicación. Sin embargo, si no queremos preocuparnos por esto,
+                                             la aplicación nos da la opción de hacerlo automáticamente, y así no tenemos que preocuparnos por qué archivos subimos.</p>
+
+                                            <p>Igualmente, las funcionalidades que generan resultados lo hacen depositando los resultados en el HDFS. Si no queremos
+                                                 traernos manualmente al sistema local de ficheros del front-end 
+                                            del cluster el fichero de salida para visualizarlo la aplicación nos ofrecerá la posibilidad de hacerlo automáticamente también.<p>
+
+                                            <p>Las gráficas, al ser generadas con una biblioteca estándar de python como es matplotlib y no con spark se guardan directamente en el front-end.</p>
+
+                                        </p>
+                                            </blockquote>
+                                    </div>
+
+                                </div>
                        
                                 
                             </div>
@@ -163,6 +304,26 @@
 
                     function toggleMenuP3() {
                     var menuBox = document.getElementById('menu-box-P3');    
+                        if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
+                            menuBox.style.display = "none";
+                        }
+                        else { // if is menuBox hidden, display it
+                            menuBox.style.display = "block";
+                        }
+                    }
+
+                    function toggleLocal() {
+                    var menuBox = document.getElementById('menu-box-local');    
+                        if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
+                            menuBox.style.display = "none";
+                        }
+                        else { // if is menuBox hidden, display it
+                            menuBox.style.display = "block";
+                        }
+                    }
+
+                    function toggleCluster() {
+                    var menuBox = document.getElementById('menu-box-cluster');    
                         if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
                             menuBox.style.display = "none";
                         }
