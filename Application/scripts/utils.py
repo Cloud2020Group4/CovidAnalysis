@@ -16,6 +16,10 @@ def month_string(month):
 
     return sw.get(month)
 
+def year_month_string(year_month):
+    year, month = year_month.split("-")
+    return month_string(int(month)) + ' ' + year
+
 def num_days_a_month(month):
     if month in [1,3,5,7,8,10,12]:
         return 31

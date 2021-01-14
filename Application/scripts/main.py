@@ -22,7 +22,7 @@ def write_executable(data_type, to_execute, mode, num_threads_local):
         if num_threads_local == 0:
             str_num_threads_local = '*'
         else:
-            str_num_treads_local = str(num_threads_local)
+            str_num_threads_local = str(num_threads_local)
         file.write("spark = SparkSession.builder.appName('CovidAnalysis').master('local[" + str_num_threads_local + "]').getOrCreate()\n")
     elif mode == 'hadoop':
          file.write("spark = SparkSession.builder.appName('CovidAnalysis').getOrCreate()\n")
@@ -53,17 +53,25 @@ def write_executable(data_type, to_execute, mode, num_threads_local):
     file.write('df.show()' + '\n')
     
     # Print dataframe to file
+    now = datetime.now()
+    dt_string = now.strftime("%d-%m-%Y_%H-%M-%S")
+    output_directory = dir + "/saved_outputs"
+    if not os.path.exists(output_directory):
+        os.mkdir(output_directory)
+
+    output_dir = output_directory + "/output_" + dt_string
     if mode == 'local':
-        file.write("shutil.rmtree('" + dir  + "/output', ignore_errors = True, onerror = None)\n")
-        file.write("df.coalesce(1).write.format('csv').options(header=True).save('" + dir + "/output')\n")
+        file.write("shutil.rmtree('" + output_dir + "', ignore_errors = True, onerror = None)\n")
+        file.write("df.coalesce(1).write.format('csv').options(header=True).save('" + output_dir + "/output')\n")
     elif mode == 'hadoop':
+        output_dir_hdfs = "output_" + dt_string
         file.write("import os\n")
-        file.write("os.system('hadoop fs -rm -r output')\n")
-        file.write("df.coalesce(1).write.format('csv').options(header=True).save('output')\n")
+        file.write("os.system('hadoop fs -rm -r " + output_dir_hdfs + "')\n")
+        file.write("df.coalesce(1).write.format('csv').options(header=True).save('" + output_dir_hdfs + "')\n")
         # Get the output file from HDFS
         if ask_yes_no_option_covid_data("Do you want to get the output from HDFS when the execution finish?[y/n]: "):
-            file.write("shutil.rmtree('" + dir  + "/output', ignore_errors = True, onerror = None)\n")
-            file.write("os.system('hadoop fs -get output " + dir + "')\n")
+            file.write("shutil.rmtree('" + output_dir  + "', ignore_errors = True, onerror = None)\n")
+            file.write("os.system('hadoop fs -get " + output_dir_hdfs + " " + output_directory + "')\n")
 
     file.close() 
 
@@ -137,12 +145,22 @@ def enter_date():
     return date
 
 def enter_month():
-     while(True):
+    while(True):
         this_month = enter_integer("Enter a month number (from 1 to 12): ")
         if this_month in [i for i in range(1, 13)]:
             break
         else:
             print("Month number must be between 1 and 12")
+    return this_month
+
+def enter_year():
+    while(True):
+        this_year = enter_integer("Enter a year (2020 or 2021): ")
+        if this_year in [2020, 2021]:
+            break
+        else:
+            print("Please enter 2020 or 2021")
+    return this_year
 
 def enter_aggregate_option():    
     while(True):       
@@ -238,45 +256,52 @@ def write_executable_covid_data(final_option, mode, num_threads_local):
         func = "data.get_data_a_country_a_period_of_time('" + country + "'" + date_options + options_text + ")"
 
     elif final_option == '2.2':
+        this_year = enter_year()
         this_month = enter_month()
         options_text = ask_options_covid_data(True, True, True, False)
-        func = "data.get_data_a_month_daily_all_countries(" + str(this_month) + options_text + ")"
+        func = "data.get_data_a_month_daily_all_countries(" + str(this_month) + ", " + str(this_year) + options_text + ")"
     
     elif final_option == '2.3':
+        this_year = enter_year()
         this_month = enter_month()
         country = input("Enter a country name: ")
         options_text = ask_options_covid_data(True, True, True, True)
-        func = "data.get_data_a_month_daily_a_country(" + str(this_month) + ", '" + country + "'" + options_text + ")"
+        func = "data.get_data_a_month_daily_a_country(" + str(this_month) + ", " + str(this_year) + ", '" + country + "'" + options_text + ")"
 
     elif final_option == '3.1':
+        this_year = enter_year()
         this_month = enter_month()    
         agg_option = enter_aggregate_option()
         options_text = ask_options_covid_data(False, False, True, False)
-        func = "data.get_data_a_month_total_all_countries(" + str(this_month) + agg_option + options_text + ")"
+        func = "data.get_data_a_month_total_all_countries(" + str(this_month) + ", " + str(this_year) + agg_option + options_text + ")"
 
     elif final_option == '3.1.1':
+        this_year = enter_year()
         this_month = enter_month()
         num_countries = enter_integer("Enter the number of countries that will appear in the top: ")
         options_text = ask_options_covid_data(False, False, True, True)
-        func = "data.get_countries_with_more_cases_a_month(" + str(this_month) + ", " + str(num_countries) + options_text + ")"
+        func = "data.get_countries_with_more_cases_a_month(" + str(this_month) + ", " + str(this_year) + ", " + str(num_countries) + options_text + ")"
     
     elif final_option == '3.1.2':
+        this_year = enter_year()
         this_month = enter_month()
         num_countries = enter_integer("Enter the number of countries that will appear in the top: ")
         options_text = ask_options_covid_data(False, False, True, True)
-        func = "data.get_countries_with_less_cases_a_month(" + str(this_month) + ", " + str(num_countries) + options_text + ")"
+        func = "data.get_countries_with_less_cases_a_month(" + str(this_month) + ", " + str(this_year) + ", " + str(num_countries) + options_text + ")"
 
     elif final_option == '3.1.3':
+        this_year = enter_year()
         this_month = enter_month()
         num_countries = enter_integer("Enter the number of countries that will appear in the top: ")
         options_text = ask_options_covid_data(False, False, True, True)
-        func = "data.get_countries_with_more_deaths_a_month(" + str(this_month) + ", " + str(num_countries) + options_text + ")"
+        func = "data.get_countries_with_more_deaths_a_month(" + str(this_month) + ", " + str(this_year) + ", " + str(num_countries) + options_text + ")"
     
     elif final_option == '3.1.4':
-        this_month = enter_month
+        this_year = enter_year()
+        this_month = enter_month()
         num_countries = enter_integer("Enter the number of countries that will appear in the top: ")
         options_text = ask_options_covid_data(False, False, True, True)
-        func = "data.get_countries_with_less_deaths_a_month(" + str(this_month) + ", " + str(num_countries) + options_text + ")"
+        func = "data.get_countries_with_less_deaths_a_month(" + str(this_month) + ", " + str(this_year) + ", " + str(num_countries) + options_text + ")"
 
     elif final_option == '3.2':
         date = enter_date()
@@ -314,9 +339,10 @@ def write_executable_covid_data(final_option, mode, num_threads_local):
         func = "data.get_data_aggregate_a_country_all_months('" + country + "'" + agg_option + options_text + ")"
 
     elif final_option == '5.1':
+        this_year = enter_year()
         this_month = enter_month()
         options_text = ask_options_covid_data(False, False, False, True)
-        func = "data.get_total_data_a_month_per_continent(" + str(this_month) + options_text + ")"
+        func = "data.get_total_data_a_month_per_continent(" + str(this_month) + ", " + str(this_year) + options_text + ")"
 
     elif final_option == '5.2':
         date = enter_date()
@@ -331,11 +357,12 @@ def write_executable_covid_data(final_option, mode, num_threads_local):
         func = "data.compare_two_countries_a_period_of_time('" + country1 + "', '" + country2 + "'"+ date_options + options_text + ")"
 
     elif final_option == '6.2':
+        this_year = enter_year()
         this_month = enter_month()
         country1 = input("Enter a country name: ")
         country2 = input("Enter another country name: ")        
         options_text = ask_options_covid_data(True, True, True, True)
-        func = "data.compare_two_countries_a_month_daily(" + str(this_month) + ", '" + country1 + "', '" + country2 + "'" + options_text + ")"
+        func = "data.compare_two_countries_a_month_daily(" + str(this_month) + ", " + str(this_year) + ", '" + country1 + "', '" + country2 + "'" + options_text + ")"
 
     elif final_option == '6.3':
         country1 = input("Enter a country name: ")
@@ -550,10 +577,15 @@ def aux_menu(indicator, dataType, mode, num_threads_local):
             print("Wrong Choice")
 
 def execute_spark_submit(mode, num_executors, executor_cores):
+    if ask_yes_no_option_covid_data("Do you want to measure the execution time when submitting the spark script execute.py?[y/n]: "):
+        command = "time "
+    else:
+        command = ""
+
     if mode == 'local' :
-        os.system("spark-submit " + dir + "/scripts/execute.py")
+        os.system(command + "spark-submit " + dir + "/scripts/execute.py")
     elif mode == 'hadoop':
-        command = "spark-submit"
+        command = command + "spark-submit"
         if num_executors > 0:
             command = command + " --num-executors " + str(num_executors)
             print('Runing spark with ' + str(num_executors) + ' working nodes')

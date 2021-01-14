@@ -9,8 +9,9 @@ from pyspark.sql.functions import col
 
 def plot_dataframe_with_date(df, columnX, columnY, name, save_name, xlabel = None, ylabel = None):
     plt.close('all')
-    x_values = df.select(columnX).collect()
-    y_values = df.select(columnY).collect()
+    df.show()
+    x_values = [row[0] for row in df.select(columnX).collect()]
+    y_values = [row[0] for row in df.select(columnY).collect()]
     fig, ax = plt.subplots()
     ax.plot(x_values, y_values)
     fig.autofmt_xdate()
@@ -26,9 +27,9 @@ def plot_dataframe_with_date(df, columnX, columnY, name, save_name, xlabel = Non
 
 def plot_dataframe_with_date_double(df, columnX, columnY1, columnY2, name, save_name, label1, label2, xlabel = None, ylabel = None):
     plt.close('all')
-    x_values = df.select(columnX).collect()
-    y1_values = df.select(columnY1).collect()
-    y2_values = df.select(columnY2).collect()
+    x_values = [row[0] for row in df.select(columnX).collect()]
+    y1_values = [row[0] for row in df.select(columnY1).collect()]
+    y2_values = [row[0] for row in df.select(columnY2).collect()]
     fig, ax = plt.subplots()
     ax.plot(x_values, y1_values, label = label1)
     ax.plot(x_values, y2_values, label = label2)
@@ -82,7 +83,7 @@ def plot_three_bars_continent(df, bar_names, bar_values1, bar_values2, bar_value
 def plot_bars_months(df, bar_names, bar_values, name, save_name):
     plt.close('all')
     fig, ax = plt.subplots()
-    bars = [utils.month_string(row[0]) for row in df.select(bar_names).collect()]
+    bars = [utils.year_month_string(row[0]) for row in df.select(bar_names).collect()]
     values = [row[0] for row in df.select(bar_values).collect()]
     pos = np.arange(len(bars))
     ax.bar(pos, values)
@@ -97,7 +98,7 @@ def plot_bars_months(df, bar_names, bar_values, name, save_name):
 def plot_bars_months_double(df, bar_names, bar_values1, bar_values2, name, save_name, label1, label2):
     plt.close('all')
     fig, ax = plt.subplots()
-    bars = [utils.month_string(row[0]) for row in df.select(bar_names).collect()]
+    bars = [utils.year_month_string(row[0]) for row in df.select(bar_names).collect()]
     values1 = [row[0] for row in df.select(bar_values1).collect()]
     values2 = [row[0] for row in df.select(bar_values2).collect()]
     pos = np.arange(len(bars))
