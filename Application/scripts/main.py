@@ -639,7 +639,7 @@ def main():
     while True:
         print("**********************")
         print("Menu")
-        print("1.DOWNLOAD THE NEWEST DATASETS- Please execute this option in the first place before doing anything else")
+        print("1.DOWNLOAD THE NEWEST DATASET WITH COVID-19 DATA")
         print("2.Covid-19 data")
         print("3.Economic data")
         print("4.Populational data")    
