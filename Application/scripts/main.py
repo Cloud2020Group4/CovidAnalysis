@@ -250,11 +250,11 @@ def write_executable_covid_data(final_option, mode, num_threads_local):
         func = "data.get_data_a_date_all_countries('" + date + "'" + options_text + ")"
     elif final_option == '1.2': 
         date = enter_date()
-        country = input("Enter a country name: ")
+        country = input("Enter a country name (Enter 'World' for global data): ")
         options_text = ask_options_covid_data(True, True, True, False)
         func = "data.get_data_a_date_a_country('" + date + "', '"+ country + "'" + options_text + ")"
     elif final_option == '2.1':
-        country = input("Enter a country name: ")
+        country = input("Enter a country name (Enter 'World' for global data): ")
         func = "data.get_data_a_country_a_period_of_time('" + country + "'"
         date_options = date_limit_options()
         options_text = ask_options_covid_data(True, True, True, True)
@@ -269,7 +269,7 @@ def write_executable_covid_data(final_option, mode, num_threads_local):
     elif final_option == '2.3':
         this_year = enter_year()
         this_month = enter_month()
-        country = input("Enter a country name: ")
+        country = input("Enter a country name (Enter 'World' for global data): ")
         options_text = ask_options_covid_data(True, True, True, True)
         func = "data.get_data_a_month_daily_a_country(" + str(this_month) + ", " + str(this_year) + ", '" + country + "'" + options_text + ")"
 
@@ -338,7 +338,7 @@ def write_executable_covid_data(final_option, mode, num_threads_local):
         func = "data.get_countries_with_less_deaths_until_a_date('" + date + "', " + str(num_countries) + options_text + ")"
 
     elif final_option == '4.1':
-        country = input("Enter a country name: ")        
+        country = input("Enter a country name (Enter 'World' for global data):  ")        
         agg_option = enter_aggregate_option()        
         options_text = ask_options_covid_data(False, False, True, True)
         func = "data.get_data_aggregate_a_country_all_months('" + country + "'" + agg_option + options_text + ")"
@@ -355,8 +355,8 @@ def write_executable_covid_data(final_option, mode, num_threads_local):
         func = "data.get_total_data_until_a_date_per_continent('" + date + "'" + options_text + ")"
 
     elif final_option == '6.1':
-        country1 = input("Enter a country name: ")
-        country2 = input("Enter another country name: ")        
+        country1 = input("Enter a country name (Enter 'World' for global data):  ")
+        country2 = input("Enter another country name (Enter 'World' for global data):  ")        
         date_options = date_limit_options()
         options_text = ask_options_covid_data(True, True, True, True)
         func = "data.compare_two_countries_a_period_of_time('" + country1 + "', '" + country2 + "'"+ date_options + options_text + ")"
@@ -364,14 +364,14 @@ def write_executable_covid_data(final_option, mode, num_threads_local):
     elif final_option == '6.2':
         this_year = enter_year()
         this_month = enter_month()
-        country1 = input("Enter a country name: ")
-        country2 = input("Enter another country name: ")        
+        country1 = input("Enter a country name (Enter 'World' for global data):  ")
+        country2 = input("Enter another country name (Enter 'World' for global data):  ")        
         options_text = ask_options_covid_data(True, True, True, True)
         func = "data.compare_two_countries_a_month_daily(" + str(this_month) + ", " + str(this_year) + ", '" + country1 + "', '" + country2 + "'" + options_text + ")"
 
     elif final_option == '6.3':
-        country1 = input("Enter a country name: ")
-        country2 = input("Enter another country name: ")       
+        country1 = input("Enter a country name (Enter 'World' for global data):  ")
+        country2 = input("Enter another country name (Enter 'World' for global data):  ")       
         agg_option = enter_aggregate_option()
         options_text = ask_options_covid_data(False, False, True, True)
         func = "data.compare_two_countries_all_months_aggregated('" + country1 + "', '" + country2 + "'" + agg_option + options_text + ")"
