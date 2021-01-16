@@ -1,0 +1,139 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>Inicio</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper" class="fade-in">
+
+				<!-- Intro -->
+
+
+				<!-- Header -->
+					<header id="header">
+						<a href="#" class="logo">Gráficas</a> 
+					</header>
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul class="links">
+							<li><a href="index.html">Ideas Principales del Proyecto</a></li>
+							<li><a href ="funcionamiento.html"> Funcionamiento </a></li>
+							<li><a href="datasets.html">Datasets y Scripts</a></li>
+							<li><a href="sobreNosotros.html">Sobre Nosotros</a></li>
+						</ul>
+						<ul class="icons">
+							<li><a href="https://github.com/Cloud2020Group4/CovidAnalysis" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+						</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+
+
+                        <section class= "post">
+                            <div class = "row">
+                                <div class="col-6 col-12-small">
+                                    <ul class="actions stacked">
+                                        <li>
+                                            <p id="G1" onclick="toggleMenuG1()" class="button small fit"> Media de Casos en Francia</p>
+								                <div id="menu-box-G1" style="display: none">
+									             <img src ="images/graphs/avg_new_cases_per_month_France.png" width="400" height="341">
+								            </div>
+                                        </li>
+                                        <li>
+                                            <p id="G2" onclick="toggleMenuG2()" class="button small fit"> Nuevos Casos en Francia y Portugal en Noviembre</p>
+                                            <div id="menu-box-G2" style="display: none">
+                                            <img src ="images/graphs/compare_new_cases_smoothed_per_million_Portugal_vs_France_November.png" width="400" height="431">
+                                        </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-6 col-12-small">
+                                    <ul class="actions stacked">
+                                        <li>
+                                            <p id="G3" onclick="toggleMenuG3()" class="button small fit"> Muertes por continente en Noviembre </p>
+                                            <div id="menu-box-G3" style="display: none">
+                                            <img src ="images/graphs/new_deaths_per_continent_November.png" width="400" height="341">
+                                        </li>
+                                        <li>
+                                            <p id="G4" onclick="toggleMenuG4()" class="button small fit"> Casos en reino unido y en Estados unidos </p>
+                                            <div id="menu-box-G4" style="display: none">
+                                            <img src ="images/graphs/compare_total_new_cases_per_million_per_month_United Kingdom_vs_United States.png" width="400" height="341">
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </section>
+
+					</div>
+
+				<!-- Copyright -->
+					<div id="copyright">
+						<ul><li>&copy; Untitled</li><li>Design: <a href="https://html5up.net">HTML5 UP</a></li></ul>
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+    </body>
+    
+<script>
+    function toggleMenuG1() {
+        var menuBox = document.getElementById('menu-box-G1');    
+            if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
+                menuBox.style.display = "none";
+            }
+            else { // if is menuBox hidden, display it
+                menuBox.style.display = "block";
+            }
+        }
+
+        function toggleMenuG2() {
+            var menuBox = document.getElementById('menu-box-G2');    
+                if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
+                    menuBox.style.display = "none";
+                }
+                else { // if is menuBox hidden, display it
+                    menuBox.style.display = "block";
+                }
+        }
+
+        function toggleMenuG3() {
+            var menuBox = document.getElementById('menu-box-G3');    
+                if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
+                    menuBox.style.display = "none";
+                }
+                else { // if is menuBox hidden, display it
+                    menuBox.style.display = "block";
+                }
+        }
+
+        function toggleMenuG4() {
+            var menuBox = document.getElementById('menu-box-G4');    
+                if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
+                    menuBox.style.display = "none";
+                }
+                else { // if is menuBox hidden, display it
+                    menuBox.style.display = "block";
+                }
+        }
+
+</script>
+</html>
