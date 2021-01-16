@@ -3,6 +3,7 @@ import covidData, utils
 # For being able to use external python libraries, set [export PYSPARK_PYTHON='/usr/bin/python']
 # Also you have to install the library before (pip install <library>)
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 import numpy as np
 import os
 from pyspark.sql.functions import col
@@ -14,6 +15,7 @@ def plot_dataframe_with_date(df, columnX, columnY, name, save_name, xlabel = Non
     y_values = [row[0] for row in df.select(columnY).collect()]
     fig, ax = plt.subplots()
     ax.plot(x_values, y_values)
+    ax.xaxis.set_major_locator(ticker.AutoLocator())
     fig.autofmt_xdate()
     ax.set_title(name, loc='center', wrap=True)
     if xlabel != None:
@@ -33,6 +35,7 @@ def plot_dataframe_with_date_double(df, columnX, columnY1, columnY2, name, save_
     fig, ax = plt.subplots()
     ax.plot(x_values, y1_values, label = label1)
     ax.plot(x_values, y2_values, label = label2)
+    ax.xaxis.set_major_locator(ticker.AutoLocator())
     plt.legend()
     fig.autofmt_xdate()
     ax.set_title(name, loc='center', wrap=True)

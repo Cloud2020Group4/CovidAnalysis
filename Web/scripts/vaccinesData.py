@@ -6,11 +6,12 @@ import utils
 
 class VaccinesData:
 
-    def __init__(self, sparkSes, mode):
+    def __init__(self, sparkSes, mode, output_dir):
         self.spark = sparkSes
-        self.dir = dirname(dirname(abspath(__file__)))
+        self.dir_script = dirname(dirname(abspath(__file__)))
+        self.dir = output_dir
         if mode == 'local':
-            self.data_dir = self.dir + "/datasets/vaccine.csv"
+            self.data_dir = self.dir_script + "/datasets/vaccine.csv"
         elif mode == 'hadoop':
             self.data_dir = "vaccine.csv"
 

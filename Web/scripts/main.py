@@ -14,6 +14,17 @@ def download_datasets(mode):
 
 
 def write_executable(data_type, to_execute, mode, num_threads_local):
+    # Create global output directory
+    output_directory = dir + "/saved_outputs"
+    if not os.path.exists(output_directory):
+        os.mkdir(output_directory)
+    
+    now = datetime.now()
+    dt_string = now.strftime("%d-%m-%Y_%H-%M-%S")
+    results_dir = output_directory + '/results_' + dt_string
+    os.mkdir(results_dir)
+    os.mkdir(results_dir + '/graphs')
+
     file = open(dir + '/scripts/execute.py','w')
     file.write('import covidData, economicData,populationData, processData, vaccinesData,physiciansData, machineLearning, vaccinesData\n')
     file.write('import shutil\n')
@@ -27,25 +38,25 @@ def write_executable(data_type, to_execute, mode, num_threads_local):
     elif mode == 'hadoop':
          file.write("spark = SparkSession.builder.appName('CovidAnalysis').getOrCreate()\n")
     if data_type=='covid':
-        file.write("data = covidData.CovidData(spark, '" + mode + "')\n")
+        file.write("data = covidData.CovidData(spark, '" + mode + "', '" + results_dir + "')\n")
 
     elif data_type=='economy':
-        file.write("data = processData.ProcessData(spark, '" + mode + "')\n")
+        file.write("data = processData.ProcessData(spark, '" + mode + "', '" + results_dir + "')\n")
         
     elif data_type=='population':
-        file.write("data = processData.ProcessData(spark, '" + mode + "')\n")
+        file.write("data = processData.ProcessData(spark, '" + mode + "', '" + results_dir + "')\n")
         
     elif data_type=='health':
-        file.write("data = processData.ProcessData(spark, '" + mode + "')\n")
+        file.write("data = processData.ProcessData(spark, '" + mode + "', '" + results_dir + "')\n")
 
     elif data_type=='vaccines':
-        file.write("data = vaccinesData.VaccinesData(spark, '" + mode + "')\n")
+        file.write("data = vaccinesData.VaccinesData(spark, '" + mode + "', '" + results_dir + "')\n")
     
     elif data_type=='physicians':
-        file.write("data = physiciansData.PhysiciansData(spark, '" + mode + "')\n")
+        file.write("data = physiciansData.PhysiciansData(spark, '" + mode + "', '" + results_dir + "')\n")
 
     elif data_type=='machineLearning':
-        file.write("data = machineLearning.MachineLearning(spark, '" + mode + "')\n")
+        file.write("data = machineLearning.MachineLearning(spark, '" + mode + "', '" + results_dir + "')\n")
 
     file.write('df =' + to_execute + '\n')
 
@@ -53,25 +64,19 @@ def write_executable(data_type, to_execute, mode, num_threads_local):
     file.write('df.show()' + '\n')
     
     # Print dataframe to file
-    now = datetime.now()
-    dt_string = now.strftime("%d-%m-%Y_%H-%M-%S")
-    output_directory = dir + "/saved_outputs"
-    if not os.path.exists(output_directory):
-        os.mkdir(output_directory)
-
-    output_dir = output_directory + "/output_" + dt_string
+    output_dir = results_dir + '/output'
     if mode == 'local':
         file.write("shutil.rmtree('" + output_dir + "', ignore_errors = True, onerror = None)\n")
-        file.write("df.coalesce(1).write.format('csv').options(header=True).save('" + output_dir + "/output')\n")
+        file.write("df.coalesce(1).write.format('csv').options(header=True).save('" + output_dir + "')\n")
     elif mode == 'hadoop':
-        output_dir_hdfs = "output_" + dt_string
+        output_dir_hdfs = "output"
         file.write("import os\n")
         file.write("os.system('hadoop fs -rm -r " + output_dir_hdfs + "')\n")
         file.write("df.coalesce(1).write.format('csv').options(header=True).save('" + output_dir_hdfs + "')\n")
         # Get the output file from HDFS
         if ask_yes_no_option_covid_data("Do you want to get the output from HDFS when the execution finish?[y/n]: "):
             file.write("shutil.rmtree('" + output_dir  + "', ignore_errors = True, onerror = None)\n")
-            file.write("os.system('hadoop fs -get " + output_dir_hdfs + " " + output_directory + "')\n")
+            file.write("os.system('hadoop fs -get " + output_dir_hdfs + " " + results_dir + "')\n")
 
     file.close() 
 
@@ -245,11 +250,11 @@ def write_executable_covid_data(final_option, mode, num_threads_local):
         func = "data.get_data_a_date_all_countries('" + date + "'" + options_text + ")"
     elif final_option == '1.2': 
         date = enter_date()
-        country = input("Enter a country name: ")
+        country = input("Enter a country name (Enter 'World' for global data): ")
         options_text = ask_options_covid_data(True, True, True, False)
         func = "data.get_data_a_date_a_country('" + date + "', '"+ country + "'" + options_text + ")"
     elif final_option == '2.1':
-        country = input("Enter a country name: ")
+        country = input("Enter a country name (Enter 'World' for global data): ")
         func = "data.get_data_a_country_a_period_of_time('" + country + "'"
         date_options = date_limit_options()
         options_text = ask_options_covid_data(True, True, True, True)
@@ -264,7 +269,7 @@ def write_executable_covid_data(final_option, mode, num_threads_local):
     elif final_option == '2.3':
         this_year = enter_year()
         this_month = enter_month()
-        country = input("Enter a country name: ")
+        country = input("Enter a country name (Enter 'World' for global data): ")
         options_text = ask_options_covid_data(True, True, True, True)
         func = "data.get_data_a_month_daily_a_country(" + str(this_month) + ", " + str(this_year) + ", '" + country + "'" + options_text + ")"
 
@@ -333,7 +338,7 @@ def write_executable_covid_data(final_option, mode, num_threads_local):
         func = "data.get_countries_with_less_deaths_until_a_date('" + date + "', " + str(num_countries) + options_text + ")"
 
     elif final_option == '4.1':
-        country = input("Enter a country name: ")        
+        country = input("Enter a country name (Enter 'World' for global data):  ")        
         agg_option = enter_aggregate_option()        
         options_text = ask_options_covid_data(False, False, True, True)
         func = "data.get_data_aggregate_a_country_all_months('" + country + "'" + agg_option + options_text + ")"
@@ -350,8 +355,8 @@ def write_executable_covid_data(final_option, mode, num_threads_local):
         func = "data.get_total_data_until_a_date_per_continent('" + date + "'" + options_text + ")"
 
     elif final_option == '6.1':
-        country1 = input("Enter a country name: ")
-        country2 = input("Enter another country name: ")        
+        country1 = input("Enter a country name (Enter 'World' for global data):  ")
+        country2 = input("Enter another country name (Enter 'World' for global data):  ")        
         date_options = date_limit_options()
         options_text = ask_options_covid_data(True, True, True, True)
         func = "data.compare_two_countries_a_period_of_time('" + country1 + "', '" + country2 + "'"+ date_options + options_text + ")"
@@ -359,14 +364,14 @@ def write_executable_covid_data(final_option, mode, num_threads_local):
     elif final_option == '6.2':
         this_year = enter_year()
         this_month = enter_month()
-        country1 = input("Enter a country name: ")
-        country2 = input("Enter another country name: ")        
+        country1 = input("Enter a country name (Enter 'World' for global data):  ")
+        country2 = input("Enter another country name (Enter 'World' for global data):  ")        
         options_text = ask_options_covid_data(True, True, True, True)
         func = "data.compare_two_countries_a_month_daily(" + str(this_month) + ", " + str(this_year) + ", '" + country1 + "', '" + country2 + "'" + options_text + ")"
 
     elif final_option == '6.3':
-        country1 = input("Enter a country name: ")
-        country2 = input("Enter another country name: ")       
+        country1 = input("Enter a country name (Enter 'World' for global data):  ")
+        country2 = input("Enter another country name (Enter 'World' for global data):  ")       
         agg_option = enter_aggregate_option()
         options_text = ask_options_covid_data(False, False, True, True)
         func = "data.compare_two_countries_all_months_aggregated('" + country1 + "', '" + country2 + "'" + agg_option + options_text + ")"
@@ -634,7 +639,7 @@ def main():
     while True:
         print("**********************")
         print("Menu")
-        print("1.DOWNLOAD THE NEWEST DATASETS- Please execute this option in the first place before doing anything else")
+        print("1.DOWNLOAD THE NEWEST DATASET WITH COVID-19 DATA")
         print("2.Covid-19 data")
         print("3.Economic data")
         print("4.Populational data")    
@@ -875,22 +880,22 @@ def main():
             while(True):
                 print("----------------------")
                 print("Machine Learning Menu")
-                print("1. Total deaths per million, Total cases per million, GDP per capita, Hospital bed per thousand")
-                print("2. Total deaths per million, Total cases per million, Vaccine importance, Vaccine safety")
-                print("3. Total deaths per million, Total cases per million, Number of physicians per thousand")
+                print("1. Total deaths per million, GDP per capita, Hospital bed per thousand")
+                print("2. Total deaths per million, Vaccine importance")
+                print("3. Total deaths per million, Number of physicians per thousand")
                 print("----------------------")
                 option6=enter_integer("Choose the indicators you want to use when clustering: ")
                 if option6==1:
-                    write_executable('machineLearning', "data.ml_covid_data(['total_deaths_per_million', 'total_cases_per_million', 'gdp_per_capita', 'hospital_beds_per_thousand'])", mode, num_threads_local)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    write_executable('machineLearning', "data.ml_covid_data(['total_deaths_per_million', 'gdp_per_capita', 'hospital_beds_per_thousand'])", mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option6 == 2:
-                    write_executable('machineLearning', "data.ml_vaccines_data(['total_deaths_per_million', 'total_cases_per_million'], ['Vaccine importance, Strongly agree (%)', 'Vaccine safety,Strongly agree (%)'])", mode, num_threads_local)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    write_executable('machineLearning', "data.ml_vaccines_data(['total_deaths_per_million'], ['Vaccine importance, Strongly agree (%)'])", mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option6 == 3:
-                    write_executable('machineLearning', "data.ml_physicians_data(['total_deaths_per_million', 'total_cases_per_million'])", mode, num_threads_local)
-                    os.system("spark-submit " + dir + "/scripts/execute.py")
+                    write_executable('machineLearning', "data.ml_physicians_data(['total_deaths_per_million'])", mode, num_threads_local)
+                    execute_spark_submit(mode, num_executors, executor_cores)
                     break
 
                 else: 

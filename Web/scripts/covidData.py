@@ -55,11 +55,12 @@ from os.path import dirname, abspath
 
 class CovidData:
     # [Constructor] the function receives a SparkSession and initializes the dataframe needed
-    def __init__(self, sparkSes, mode):
+    def __init__(self, sparkSes, mode, output_dir):
         self.spark = sparkSes
-        self.dir = dirname(dirname(abspath(__file__)))
+        self.dir_script = dirname(dirname(abspath(__file__)))
+        self.dir = output_dir
         if mode == 'local':
-            self.data_dir = self.dir + "/datasets/owid-covid-data.csv"
+            self.data_dir = self.dir_script + "/datasets/owid-covid-data.csv"
         elif mode == 'hadoop':
             self.data_dir = "owid-covid-data.csv"
             
@@ -312,7 +313,7 @@ class CovidData:
 
             # Plot distribution of new deaths in that month
 
-            save_name = self.dir + '/graphs/'+'total_deaths_per_continent_until'+ date + '.png'
+            save_name = self.dir + '/graphs/'+'total_deaths_per_continent_until_'+ date + '.png'
             title = 'Distribution of total deaths until ' + date
             covidData_graphs.plot_pie(df, 'continent', 'sum(total_deaths)', title, save_name)
 
@@ -323,10 +324,8 @@ class CovidData:
         cases, deaths, cases_text, deaths_text = utils.get_correct_columns(smoothed, totals, relative)
         df1 = self.get_data_a_country_a_period_of_time(country1, date_ini=date_ini, date_fin = date_fin, smoothed = smoothed, totals = totals, relative = relative)
         df2 = self.get_data_a_country_a_period_of_time(country2, date_ini=date_ini, date_fin = date_fin, smoothed = smoothed, totals = totals, relative = relative)
-        df, date_ini, date_fin = self.combine_dataframes(df1, df2, 'date', cases, deaths)
+        df, date_ini_str, date_fin_str = self.combine_dataframes(df1, df2, 'date', cases, deaths)
         if plot:
-            date_ini_str = date_ini.strftime("%Y-%m-%d")
-            date_fin_str = date_fin.strftime("%Y-%m-%d")
             # Plot cases
             save_name = self.dir + '/graphs/'+'compare_'+ cases + '_' + country1 + '_vs_' + country2 + '_from_' + date_ini_str + '_to_' + date_fin_str + '.png'
             title = cases_text+ ' ' + country1 + ' vs ' + country2 + ' from ' + date_ini_str + ' to ' + date_fin_str
