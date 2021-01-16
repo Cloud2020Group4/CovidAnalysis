@@ -16,7 +16,7 @@ Se distinguen en este repositorio dos partes asociadas a este proyecto. Por un l
 
 La aplicación consta de una serie de **scripts de python**, de los cuales, para hacerla funcionar, solo se ejecutará el que se llama [`main.py`](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Application/scripts/main.py). Este es un script de python estándar que implementa una serie de menús que dan acceso a las distintas funcionalidades con las que cuenta la aplicación, las cuales están implementadas en el resto de ficheros de la carpeta scripts.
 
-Una vez hayamos seleccionado qué funcionalidad de la aplicación queremos usar y hayamos introducido los parámetros y opciones necesarios para su funcionamiento, la aplicación **generará automáticaticamente un ejecutable** `execute.py`, que se guardará también en la carpeta scripts, y también automáticamente la propia aplicación ejecutará un `spark-submit` con dicho fichero como parámetro (llamando al sistema con `spark-submit execute.py`). Además opcionalmente se nos dará la opción de **medir el tiempo** que tarda en ejecutarse este script autogenerado de spark, ejecutándose, si es que queremos medir el tiempo, la orden `time spark-submit execute.py`.
+Una vez hayamos seleccionado qué funcionalidad de la aplicación queremos usar y hayamos introducido los parámetros y opciones necesarios para su funcionamiento, la aplicación **generará automáticamente un ejecutable** `execute.py`, que se guardará también en la carpeta scripts, y también automáticamente la propia aplicación ejecutará un `spark-submit` con dicho fichero como parámetro (llamando al sistema con `spark-submit execute.py`). Además opcionalmente se nos dará la opción de **medir el tiempo** que tarda en ejecutarse este script autogenerado de spark, ejecutándose, si es que queremos medir el tiempo, la orden `time spark-submit execute.py`.
 
 La aplicación generará varios objetos de salida por la ejecución de cada una de sus funcionalidades (es decir, cada vez que automáticamente genera un script y hace un `spark-submit` del mismo). Estos objetos se almacenarán en un directorio concreto para cada ejecución dentro de un directorio general `saved_outputs`. El directorio concreto de cada ejecución se llama `results_yyyy-mm-dd_hh-mm-ss` (donde yyyy-mm-dd y hh-mm-ss se corresponden, respectivamente, con la fecha y hora en la que se lanzó la ejecución de esa funcionalidad concreta). Dentro de ese directorio encontraremos dos subdirectorios más, llamados `graphs` y `output`, en los que encontramos las **gráficas generadas** y el **dataframe** obtenido (en formato csv) como resultado de la ejecución de cada utilidad de nuestra aplicación.
 
@@ -26,7 +26,7 @@ La aplicación está pensada para poder ser ejecutada sin problema y de igual ma
 
 ### Aplicación en modo local
 
-Para hacer funcionar nuestra aplicación en modo local será necesario que tengamos instaldo en nuestra máquina **Java, Python, Spark y Scala**. No se requiere ningún requisito especial para las distribuciones anteriores, aunque si se quiere usar la funcionalidad de **machine learning** de nuestra aplicación es necesario contra con **Spark-3.0.1**.
+Para hacer funcionar nuestra aplicación en modo local será necesario que tengamos instalado en nuestra máquina **Java, Python, Spark y Scala**. No se requiere ningún requisito especial para las distribuciones anteriores, aunque si se quiere usar la funcionalidad de **machine learning** de nuestra aplicación es necesario contar con **Spark-3.0.1**.
 
 La aplicación ha sido probada con éxito en una máquina local con Ubuntu 20.04, Python 3.8.5, Java OpenJDK 1.8.0_275, Spark 3.0.1 y Scala 2.11.12, aunque no debería dar problemas con otras versiones siempre y cuando mantengamos para Spark la versión 3.0.1.
 
@@ -101,11 +101,11 @@ Para actualizar su valor volvemos a ejecutar:
 $ source ~/.profile
 ```
 
-Con todo esto ya si que tenemos nuestra máquina local lista para poder ejecutar la aplicación. Para descargarla podemos hacerlo directamente desde el [enlace de la web](https://cloud2020group4.github.io/CovidAnalysis/Application.zip) (nos descargará un zip únicamente con la parte de Application) y descomprimiendo el archivo que se descarga o clonando este repositorio con la utilidad `git`, aunque si hacemos esto último hay que tener en cuenta que sólo usaremos la parte de Application (el resto se corresponde con el código fuente de la web).
+Con todo esto ya sí que tenemos nuestra máquina local lista para poder ejecutar la aplicación. Para descargarla podemos hacerlo directamente desde el [enlace de la web](https://cloud2020group4.github.io/CovidAnalysis/Application.zip) (nos descargará un zip únicamente con la parte de Application) y descomprimiendo el archivo que se descarga o clonando este repositorio con la utilidad `git`, aunque si hacemos esto último hay que tener en cuenta que sólo usaremos la parte de Application (el resto se corresponde con el código fuente de la web).
 
 Como ya se ha dicho antes, se accede a todas las funcionalidades de la aplicación **ejecutando únicamente el script `main.py`** como un ejecutable estándar de python. Este script se encuentra en la carpeta `scripts` dentro de la carpeta `Application`. Por ejemplo, si hemos clonado el repositorio en nuestro directorio local podemos ejecutar la aplicación con:
 ```
-python ~/CovidAnalysis/Application/scripts/main.py
+$ python ~/CovidAnalysis/Application/scripts/main.py
 ```
 
 Una vez hecho esto nos aparecerá un **menú inicial** en el que debemos seleccionar la **segunda opción**, ya que estamos ejecutando la aplicación con Spark sobre nuestra máquina local. A continuación debemos indicar el **paralelismo a nivel de sistema** con el que queremos ejecutar nuestra aplicación en Spark, esto es, el número de threads que se crearán y que realizarán las distintas tareas de manera distribuida. Si introducimos un número mayor que 0 se crearán tantos hilos como hayamos especificado (`master(local[N])` si hemos introducido que queremos `N` threads). Si introducimos 0 se nos crearán tantos threads como procesadores lógicos tenga nuestra máquina (`master(local[*])`).
@@ -123,11 +123,13 @@ Enter a number: 0
 
 ### Aplicación con Spark en un Cluster de Hadoop en AWS
 
-Podemos lanzar nuestra aplicación sobre un cluster de Hadoop, eligiendo Spark como aplicación y teniendo en cuenta que si queremos utilizar las funcionalidades de machine learning es necesario que el cluster cuente con **Spark-3.0.1**. Así, lanzamos el cluster en EMR (Elastica Map Reduce) de AWS (Amazon Web Services) eligiendo las opciones:
+Podemos lanzar nuestra aplicación sobre un cluster de Hadoop, eligiendo Spark como aplicación y teniendo en cuenta que si queremos utilizar las funcionalidades de machine learning es necesario que el cluster cuente con **Spark-3.0.1**. Así, lanzamos el cluster en EMR (Elastic Map Reduce) de AWS (Amazon Web Services) eligiendo las opciones:
 - **Release:** emr-6.2.0
 - **Applications:** Spark: Spark 3.0.1 on Hadoop 3.2.1 YARN with Zeppein 0.9.0-preview1
 
-El número de instancias en el cluster y el tipo de estas instancias puede elegirse como se quiera, de hecho probamos varias combinaciones para evaluar el rendimiento de nuestra aplicación en todas ellas.
+El número de instancias en el cluster y el tipo de estas instancias puede elegirse como se quiera, de hecho probamos varias combinaciones para evaluar el rendimiento de nuestra aplicación en todas ellas. Un ejemplo de configuración de cluster sobre el que funciona la aplicación sería el siguiente:
+
+![Ejemplo de configuración de Cluster en AWS](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/images/cluster1.jpg)
 
 Una vez lanzado el cluster y cuando estemos conectados con él vía ssh, aún es necesario:
 
