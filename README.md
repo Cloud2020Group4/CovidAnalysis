@@ -20,6 +20,47 @@ Una vez hayamos seleccionado qué funcionalidad de la aplicación queremos usar 
 
 La aplicación generará varios objetos de salida por la ejecución de cada una de sus funcionalidades (es decir, cada vez que automáticamente genera un script y hace un `spark-submit` del mismo). Estos objetos se almacenarán en un directorio concreto para cada ejecución dentro de un directorio general `saved_outputs`. El directorio concreto de cada ejecución se llama `results_yyyy-mm-dd_hh-mm-ss` (donde yyyy-mm-dd y hh-mm-ss se corresponden, respectivamente, con la fecha y hora en la que se lanzó la ejecución de esa funcionalidad concreta). Dentro de ese directorio encontraremos dos subdirectorios más, llamados `graphs` y `output`, en los que encontramos las **gráficas generadas** y el **dataframe** obtenido (en formato csv) como resultado de la ejecución de cada utilidad de nuestra aplicación.
 
+## ¿Qué datos incluye cada dataset?
+
+- [owid-covi-data.py](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Application/datasets/owid-covid-data.csv): Obtenido de [*Our Wold in Data*](https://ourworldindata.org/coronavirus-source-data). Incluye datos por día y país relacionados con casos y muertes por coid-19, incluyéndose los datos nuevos para ese día así como el total acumulado, los datos abolutos y relativos por millón de habitantes y datos suavizdos para la representación gráfica. Además incluye datos para indicadores económicos, demográficos y de salud.
+
+- [vaccine.py](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Application/datasets/vaccine.csv): Obtenido en el siguiente [link](https://docs.google.com/spreadsheets/d/1_EN4eAOS7zugaxQeEVYYVwFy3iFcBqzp5J6vvEGxJfI/edit#gid=783195623). Incluye resultados de una encuesta sobre la opinión que tiene la población de los países del muendo sobre la seguridad, efectividad e importancia de la vacunación.
+
+- [medical_doctors_per_1000_people](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Application/datasets/medical_doctors_per_1000_people.csv): Obtenido en [*The World Bank*](https://data.worldbank.org/indicator/SH.MED.PHYS.ZS). Incluye datos por país y año sobre el número de médicos por 100 habitantes.
+
+- [countries.csv](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Application/datasets/countries.csv): Obtenido en el siguiente [link](https://github.com/lukes/ISO-3166-Countries-with-Regional-Codes/blob/master/all/all.csv). Contiene información sobre los distintos países, sus códigos de identificación y los continentes y regiones a los que pertenecen.
+
+
+## ¿Qué hacen los distintos scripts de la aplicación?
+
+### Script principal: [main.py](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Application/scripts/main.py)
+
+Este script es el punto de entrada del programa y el único que debemos ejecutar (ejecutandolo como un script de python). Aquí se implementa el menú con el que seleccionamos la utilidad que queremos usar y los parámetros y opciones con los que queremos ejecutarla, se genera el ejecutable de spark (execute.py) con el código necesario para ejecutar en spark la funcionalidad deseada y se ejecuta.
+
+### Scripts de funciones
+
+Cada fichero implementa una clase de datos, asociada a uno o varios datasets, de los que toma sus datos para crear dataframes e incluye varias funciones para manipularlos, ya sea extrayendo datos o combinando dataframes. Algunas de estas funciones hacen uso de las funciones implementadas en los scripts auxiliares, sobre todo para representar gráficamente los datos. Todas las funciones de una clase, salvo su constructor, devuelven un dataframe con el resultado de la operación o consulta realizada. Estos ficheros son:
+
+- [covidData.py](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Application/scripts/covidData.py): Toma datos del dataset owid-covid-data.csv e implementa todas las funciones relacionadas con datos relativos a número de casos y muertes por Covid-19 en distintos países y continentes.
+
+- [processData.py](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Application/scripts/processData.py): Toma datos del dataset owid-covid-data.csv e implementa funciones que permiten obtener valores y datos para los distintos indicadores que aparecen como columnas del dataframe. Estas funciones se usan para las funcionalidades de obtención y graficación de datos económicos, demográficos y de salud.
+
+- [vaccinesData.py](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Application/scripts/vaccinesData.py): Toma datos del dataset vaccine.csv e implementa funciones que obtienen los resultados de las encuestas incluidas en el dataset por paíeses y criterio
+
+- [physiciansData.py](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Application/scripts/physiciansData.py): Toma datos de los datasets medical_doctors_per_1000_people.csv y countries.csv, los cuales combina e implementa funciones que permiten obtener datos sobre el número de médicos por 1000 habitantes por países y continentes y en distintos años.
+
+- [machineLearning.py](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Application/scripts/machineLearning.py): Toma datos de los tres datasets principales de la aplicación (owid-covid-data.csv, medical_doctors_per_1000_people.csv y  vaccine.csv) para aplicar técnicas de machine Learning (concretamente algoritmos de Clustering) y representar gráficamente los resultados obtenidos. Las funciones de graficación de clústeres, al ser exclusivas para las funciones de clustering, aparecen en el mismo script.
+
+Los scripts contienen comentarios en los que se explica el propósito de cada función que se implementa.
+
+### Scripts auxiliares
+
+Scripts de funciones que implementan utilidades para los ficheros de las dos categorías anteriores. 
+
+- [covidData_graphs.py](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Application/scripts/covidData_graphs.py): implementa una serie de funciones genéricas de elaboración de gráficas de distinto tipo que hacen uso de la biblioteca matplotlib.
+
+- [utils.py](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Application/scripts/utils.py): Funciones variadas para manipular fechas, asociar nombres a identificadores…
+
 ## ¿Cómo hacer funcionar nuestra aplicación?
 
 La aplicación está pensada para poder ser ejecutada sin problema y de igual manera en cualquier entorno en el que se pueda hacer uso de Spark, ya sea en una **máquina local** o en un **cluster de Hadoop**. Detallaremos a continuación los pasos a seguir para conseguir tener la aplicación funcionando en ambos casos.
