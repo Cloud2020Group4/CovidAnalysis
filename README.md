@@ -57,7 +57,7 @@ $ sudo apt-get install python
 $ sudo curl -O https://ftp.cixug.es/apache/spark/spark-3.0.1/spark-3.0.1-bin-hadoop2.7.tgz
 $ sudo tar xvf ./spark-3.0.1-bin-hadoop2.7.tgz
 $ sudo mkdir /usr/local/spark 
-$ sudo cp -r spark-/* /usr/local/spark3.0.1-bin-hadoop2.7/* /usr/local/sparkf
+$ sudo cp -r spark-3.0.1-bin-hadoop2.7/* /usr/local/spark
 ```
 A continuación añadimos spark a la ruta del PATH. En ~/.profile añadimos al final del fichero:
 
