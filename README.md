@@ -170,7 +170,7 @@ Podemos lanzar nuestra aplicación sobre un cluster de Hadoop, eligiendo Spark c
 
 El número de instancias en el cluster y el tipo de estas instancias puede elegirse como se quiera, de hecho probamos varias combinaciones para evaluar el rendimiento de nuestra aplicación en todas ellas. Un ejemplo de configuración de cluster sobre el que funciona la aplicación sería el siguiente:
 
-![Ejemplo de configuración de Cluster en AWS](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/images/cluster1.jpg)
+![Ejemplo de configuración de Cluster en AWS](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Web/images/cluster1.jpg)
 
 Una vez lanzado el cluster y cuando estemos conectados con él vía ssh, aún es necesario:
 
