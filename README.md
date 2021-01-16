@@ -26,7 +26,7 @@ La aplicación generará varios objetos de salida por la ejecución de cada una 
 
 - [vaccine.py](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Application/datasets/vaccine.csv): Obtenido en el siguiente [link](https://docs.google.com/spreadsheets/d/1_EN4eAOS7zugaxQeEVYYVwFy3iFcBqzp5J6vvEGxJfI/edit#gid=783195623). Incluye resultados de una encuesta sobre la opinión que tiene la población de los países del muendo sobre la seguridad, efectividad e importancia de la vacunación.
 
-- [medical_doctors_per_1000_people](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Application/datasets/medical_doctors_per_1000_people.csv): Obtenido en [*The World Bank*](https://data.worldbank.org/indicator/SH.MED.PHYS.ZS). Incluye datos por país y año sobre el número de médicos por 100 habitantes.
+- [medical_doctors_per_1000_people](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Application/datasets/medical_doctors_per_1000_people.csv): Obtenido en [*The World Bank*](https://data.worldbank.org/indicator/SH.MED.PHYS.ZS). Incluye datos por país y año sobre el número de médicos por 1000 habitantes.
 
 - [countries.csv](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Application/datasets/countries.csv): Obtenido en el siguiente [link](https://github.com/lukes/ISO-3166-Countries-with-Regional-Codes/blob/master/all/all.csv). Contiene información sobre los distintos países, sus códigos de identificación y los continentes y regiones a los que pertenecen.
 
