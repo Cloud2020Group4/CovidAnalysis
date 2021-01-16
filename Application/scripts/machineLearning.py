@@ -134,7 +134,7 @@ class MachineLearning:
         vecAssembler = VectorAssembler(inputCols=features, outputCol="features")
         df = vecAssembler.transform(df).select('id', 'features')
         scaler = StandardScaler(inputCol="features", outputCol="scaledFeatures",
-                        withStd=True, withMean=False)
+                        withStd=True, withMean=True)
         model = scaler.fit(df)
         df = model.transform(df)
 
@@ -167,7 +167,7 @@ class MachineLearning:
         
 
         # Predict with the chosen model
-        kmeans = KMeans().setK(best_k).setSeed(1).setFeaturesCol("features")
+        kmeans = KMeans().setK(best_k).setSeed(1).setFeaturesCol("scaledFeatures")
         model = kmeans.fit(df)
         predictions = model.transform(df)
         rows = predictions.select('id', 'prediction').collect()

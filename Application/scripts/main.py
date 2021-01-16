@@ -880,21 +880,21 @@ def main():
             while(True):
                 print("----------------------")
                 print("Machine Learning Menu")
-                print("1. Total deaths per million, Total cases per million, GDP per capita, Hospital bed per thousand")
-                print("2. Total deaths per million, Total cases per million, Vaccine importance, Vaccine safety")
-                print("3. Total deaths per million, Total cases per million, Number of physicians per thousand")
+                print("1. Total deaths per million, GDP per capita, Hospital bed per thousand")
+                print("2. Total deaths per million, Vaccine importance")
+                print("3. Total deaths per million, Number of physicians per thousand")
                 print("----------------------")
                 option6=enter_integer("Choose the indicators you want to use when clustering: ")
                 if option6==1:
-                    write_executable('machineLearning', "data.ml_covid_data(['total_deaths_per_million', 'total_cases_per_million', 'gdp_per_capita', 'hospital_beds_per_thousand'])", mode, num_threads_local)
+                    write_executable('machineLearning', "data.ml_covid_data(['total_deaths_per_million', 'gdp_per_capita', 'hospital_beds_per_thousand'])", mode, num_threads_local)
                     execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option6 == 2:
-                    write_executable('machineLearning', "data.ml_vaccines_data(['total_deaths_per_million', 'total_cases_per_million'], ['Vaccine importance, Strongly agree (%)', 'Vaccine safety,Strongly agree (%)'])", mode, num_threads_local)
+                    write_executable('machineLearning', "data.ml_vaccines_data(['total_deaths_per_million'], ['Vaccine importance, Strongly agree (%)'])", mode, num_threads_local)
                     execute_spark_submit(mode, num_executors, executor_cores)
                     break
                 elif option6 == 3:
-                    write_executable('machineLearning', "data.ml_physicians_data(['total_deaths_per_million', 'total_cases_per_million'])", mode, num_threads_local)
+                    write_executable('machineLearning', "data.ml_physicians_data(['total_deaths_per_million'])", mode, num_threads_local)
                     execute_spark_submit(mode, num_executors, executor_cores)
                     break
 
