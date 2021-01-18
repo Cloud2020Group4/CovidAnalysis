@@ -25,7 +25,7 @@ La aplicación generará varios objetos de salida por la ejecución de cada una 
 
 ## ¿Qué datos incluye cada dataset?
 
-- [owid-covi-data.py](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Application/datasets/owid-covid-data.csv): Obtenido de [*Our Wold in Data*](https://ourworldindata.org/coronavirus-source-data). Incluye datos por día y país relacionados con casos y muertes por coid-19, incluyéndose los datos nuevos para ese día así como el total acumulado, los datos abolutos y relativos por millón de habitantes y datos suavizdos para la representación gráfica. Además incluye datos para indicadores económicos, demográficos y de salud.
+- [owid-covid-data.py](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Application/datasets/owid-covid-data.csv): Obtenido de [*Our Wold in Data*](https://ourworldindata.org/coronavirus-source-data). Incluye datos por día y país relacionados con casos y muertes por coid-19, incluyéndose los datos nuevos para ese día así como el total acumulado, los datos abolutos y relativos por millón de habitantes y datos suavizdos para la representación gráfica. Además incluye datos para indicadores económicos, demográficos y de salud.
 
 - [vaccine.py](https://github.com/Cloud2020Group4/CovidAnalysis/blob/main/Application/datasets/vaccine.csv): Obtenido en el siguiente [link](https://docs.google.com/spreadsheets/d/1_EN4eAOS7zugaxQeEVYYVwFy3iFcBqzp5J6vvEGxJfI/edit#gid=783195623). Incluye resultados de una encuesta sobre la opinión que tiene la población de los países del muendo sobre la seguridad, efectividad e importancia de la vacunación.
 
