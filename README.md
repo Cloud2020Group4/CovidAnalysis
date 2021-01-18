@@ -8,6 +8,9 @@
 - Carla Martínez Nieto-Márquez
 - Pablo R. Morer Olmos
 
+Link a la veb del proyecto [aquí](https://cloud2020group4.github.io/CovidAnalysis).
+Descarga la aplicación en zip [aquí](https://github.com/Cloud2020Group4/CovidAnalysis/raw/main/Web/Application.zip).
+
 El proyecto **CovidAnalysis** consiste en una aplicación basada en [Apache Spark](https://spark.apache.org/) que nos permite gestionar, obtener y analizar eficientemente datos de gran variedad y volumen sobre la incidencia del **Covid-19** en el mundo, y los distintos indicadores económicos, demográficos o de salud que pudieran tener relación con los efectos de la pandemia en distintos países y regiones. Podemos **obtener los datos que se deseen**, **graficarlos**, **compararlos** y aplicar técnicas de **Machine Learnig con algoritmos de Clustering** para agrupar estos datos.
 
 Se distinguen en este repositorio dos partes asociadas a este proyecto. Por un lado, una [web](https://cloud2020group4.github.io/CovidAnalysis) en la que se presenta diversa información sobre el mismo, la manera de ejecutarlo (que también se presenta aquí a continuación) y varios resultados obtenidos haciendo uso de la aplicación. Por otro lado, está la [aplicación](https://github.com/Cloud2020Group4/CovidAnalysis/tree/main/Application) propiamente dicha en la que se encuentran los [scripts](https://github.com/Cloud2020Group4/CovidAnalysis/tree/main/Application/scripts) y [datasets](https://github.com/Cloud2020Group4/CovidAnalysis/tree/main/Application/datasets) necesarios para su funcionamiento, así como una carpeta con algunos [ejemplos de gráficas](https://github.com/Cloud2020Group4/CovidAnalysis/tree/main/Application/sample_graphs) generados con la aplicación.
