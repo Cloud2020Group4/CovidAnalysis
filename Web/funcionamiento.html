@@ -29,9 +29,9 @@
 						<li>
 							<select name="formal" onchange="javascript:handleSelect(this)">
 								<option value="">MÁS OPCIONES</option>
-								<option value="rendimiento.html">Rendimiento</option>
-								<option value="conclusion.html">conclusión</option>
-								<option value="sobreNosotros.html">Sobre Nosotros</option>
+								<option value="rendimiento.html">RENDIMIENTO</option>
+								<option value="conclusion.html">CONCLUSION</option>
+								<option value="sobreNosotros.html">SOBRE NOSOTROS</option>
 							</select>
 						</li>					
 					</ul>
@@ -71,7 +71,7 @@
 
                                        <p> Una vez hayamos seleccionado qué funcionalidad de la aplicación queremos usar y hayamos introducido los parámetros y opciones necesarios para su
                                          funcionamiento, la aplicación generará automáticamente un ejecutable <code>execute.py</code>, que se guardará también en la carpeta scripts, y también
-                                          automáticamente la propia aplicación ejecutará un <code>spark-submit</code> con dicho fichero como parámetro (llamando al sistema con <code>park-submit
+                                          automáticamente la propia aplicación ejecutará un <code>spark-submit</code> con dicho fichero como parámetro (llamando al sistema con <code>spark-submit
                                            execute.py</code>).
                                            Además opcionalmente se nos dará la opción de medir el tiempo que tarda en ejecutarse este script autogenerado de spark, ejecutándose, 
                                            si es que queremos medir el tiempo, la orden <code> spark-submit execute.py.</code></p>
@@ -91,15 +91,16 @@
 
                                 
                                 <h3 id="menuP2" onclick="toggleMenuP2()" class="button small fit"><header>¿Cómo se Ejecuta?</header></h2>
-                                <div id="menu-box-P2" style ="display:none">
-                                    <p>
-                                        <blockquote>
+                                <div id="menu-box-P2" style ="display:none" >
+                                    <p >
+                                        <blockquote style="text-align: left">
                                         La aplicación está pensada para poder ser ejecutada sin problema y de igual manera en cualquier entorno en el que se pueda hacer uso de Spark,
                                          ya sea en una máquina local o en un cluster de Hadoop. Detallaremos a continuación los pasos a seguir para conseguir tener la aplicación
                                           funcionando en ambos casos.
                                         </blockquote>
                                     </p>
                                 <center>Selecciona "MODO LOCAL" o "CLUSTER DE HADOOP EN AWS"</center>
+                                <br>
                                 <ul class="actions stacked">
                                 <li>
                                 <h3 id="local" onclicK="toggleLocal()" class="button primary"> Modo LOCAL</h3>
@@ -290,8 +291,8 @@ Updating ended...</code></pre>
                         </li>
                     </ul>
                             <hr>
-                            <h3 id="menuP5" onclick="toggleMenuP5()" class="button small fit"><header>¿Qué podemos hacer con la aplicación?</header></h2>
-                                <div id="menu-box-P5" style ="display:none">
+                            <h3 id="menuP5" onclick="toggleMenuP5()" class="button small fit"><header>¿Qué podemos hacer con la aplicación?</header></h3>
+                                <div id="menu-box-P5" style ="display:none; text-align: left;">
                                 <blockquote>
                                     Una vez hayamos seguidos los pasos anteriores y hayamos ejecutado la aplicación
                                      y configurado el paralelismo local, la aplicación nos mostrará el siguiente menú principal:
@@ -315,19 +316,19 @@ Enter your choice:
                                     además de varios indicadores económicos, demográficos y de salud útiles para el estudio de la incidencia de la pandemia. Cuando descargas la aplicación
                                     esta incluye una versión de este dataset desactualizada. Si queremos trabajar con los últimos datos disponibles (hasta el día anterior al que estamos) 
                                     debemos ejecutar la opción 1 y ya podremos trabajar con datos lo más actuales posible. Si estamos ejecutando en un cluster de Hadoop, al ejecutar esta
-                                    opción se actualiza también el fichero en el HDFS, por lo que no es necesario hacer nada más que seleccionar la opción en el menú.<br>
+                                    opción se actualiza también el fichero en el HDFS, por lo que no es necesario hacer nada más que seleccionar la opción en el menú.</p>
 
-                                    Las opciones 2-6 dan acceso a las utilidades de la aplicación como tal. En todas ellas podemos ver valores de distintos indicadores de esa categoría,
+                                   <p> Las opciones 2-6 dan acceso a las utilidades de la aplicación como tal. En todas ellas podemos ver valores de distintos indicadores de esa categoría,
                                     obtener datos por países, elaborar listas con los mejores o peores países en un determinado aspecto, agregar datos por continentes o comparar resultados
                                     para dos países, todo ello obteniendo los datos en un dataframe que se guardará en formato csv y en muchos de ellos con la opción también de representar
-                                    gráficamente esos datos.<br>
+                                    gráficamente esos datos.</p>
                                     
-                                    Elaborar una gráfica comparando los casos diarios de covid-19 entre España y Portugal, ver la evolución de muertes por Covid-19 en Italia desde el día que empezó
+                                   <p> Elaborar una gráfica comparando los casos diarios de covid-19 entre España y Portugal, ver la evolución de muertes por Covid-19 en Italia desde el día que empezó
                                     su confinamiento hasta la finalización del mismo, obtener una lista de los países con más porcentaje anciano de población, comparar las facilidades para lavarse las
                                     manos por continentes, obtener la opinión de la población de un país sobre la efectividad de las vacunas o ver si existe correlación entre el número de casos de Covid
                                     en un país y su GDP con algoritmos de Clustering son algunas de las muchas opciones a las que se tienen acceso con esta aplicación. Simplemente, basta con seleccionar
-                                    qué queremos hacer en cada momennto entre las opciones disponibles y obtener los resultados. Aquí podemos ver unos ejemplos:<br><p>
-                                          <p><center> <a href="graficas.html"><button class="button primary">GRAFICAS</button></a></center></p> 
+                                    qué queremos hacer en cada momennto entre las opciones disponibles y obtener los resultados. Aquí podemos ver unos ejemplos:</p>
+                                       
                                     
                 
                                     
@@ -335,9 +336,30 @@ Enter your choice:
                                     fechas, indicadores...</p>
                                 </blockquote>
 
-                                <a href="#menuP5" class="button icon solid solo fa-arrow-up scrolly"></a> 
+                              <center> <a href="#menuP5" class="button icon solid solo fa-arrow-up scrolly"></a> </center> 
                             </div>
-                                
+                            <hr>
+                            <h3 id="menuP6" onclick="toggleMenuP6()" class="button small fit"><header> ¿Cómo obtengo los resultados de ejecutar la aplicación?</header></h3>
+
+                            <div id="menu-box-P6" style ="display:none; text-align: left;">
+                                <blockquote>
+                                   <p> Si estamos en modo local, una vez haya terminado de ejecutarse el script de spark podemos consultar los resultados obtenidos en el directorio <code>saved_outputs</code>,
+                                     que se creará dentro de la carpeta <code>Application</code>. Aquí encontraremos los resultados de cada ejecución, nombrados con el timestamp del momento en el que
+                                      comenzó la ejecución. Dentro encontraremos en output la salida en csv generada y si hemos decidido generar gráficas estas estarán en <code>graphs</code>, cada una 
+                                      de ellas en formato png.</p>
+
+                                   <p> Siempre que tengamos la opción de representar gráficamente los resultados se nos pedirá confirmación por pantalla,
+                                     salvo en el caso de Machine Learning, que al ser funciones predefinidas se generan las gráficas con los distintos clusters siempre.</p>
+                                    <p>
+                                    Si estamos usando la aplicación en Spark sobre un cluster de Hadoop, antes de que comience la ejecución se nos preguntará si queremos descargar 
+                                    los resultados del Hadoop File System
+                                    (ya que es allí donde se generan) y traerlos al sistema de fichero del front-end del cluster, para poder manipularlos más fácilmente. En caso de aceptar esta opción obtendremos los
+                                    resultados de la misma manera en la que los obteníamos en el modo local. En caso negativo tendremos el output en el HDFS mientras que las gráficas, al no ser generadas con spark
+                                    (pues spark, de momento,
+                                    no cuenta con librerías gráficas), en cualquiera de los casos siempre estarán guardadas en el sistema de ficheros local del cluster, 
+                                    al igual que si estuviésemos en modo local.</p>
+                                </blockquote>
+                            </div>
                         </div>
 
                             
@@ -401,6 +423,15 @@ Enter your choice:
                     
                     function toggleMenuP5() {
                     var menuBox = document.getElementById('menu-box-P5');    
+                        if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
+                            menuBox.style.display = "none";
+                        }
+                        else { // if is menuBox hidden, display it
+                            menuBox.style.display = "block";
+                        }
+                    }
+                    function toggleMenuP6() {
+                    var menuBox = document.getElementById('menu-box-P6');    
                         if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
                             menuBox.style.display = "none";
                         }

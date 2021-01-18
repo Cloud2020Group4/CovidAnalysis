@@ -32,9 +32,9 @@
 						<li>
 							<select name="formal" onchange="javascript:handleSelect(this)">
 								<option value="">MÁS OPCIONES</option>
-								<option value="rendimiento.html">Rendimiento</option>
-								<option value="conclusion.html">conclusión</option>
-								<option value="sobreNosotros.html">Sobre Nosotros</option>
+								<option value="rendimiento.html">RENDIMIENTO</option>
+								<option value="conclusion.html">CONCLUSION</option>
+								<option value="sobreNosotros.html">SOBRE NOSOTROS</option>
 							</select>
 						</li>					
 					</ul>
@@ -62,46 +62,51 @@
                                 durante la fase de Machine Learning, mostramos gráficamente la organización en clústeres de nuestra población tanto en 2 dimensiones como en 3 dimensiones. 
                             </blockquote>
                             <hr>
+                            <center><h2>Graficación</h2></center>
                             <p>Veamos algunas de las gráficas que han sido obtenidas mediante consultas y que consideramos que son más interesantes</p>
 
                             <div class="row" >
-                                <div class="col-2-5" >
+                                <div class="col-3" >
                                     <button onclick="toggleMostrarC()" id="btn-C">Covid</button>
                                 </div>
-                                <div class="col-2-5">
+                                <div class="col-3">
                                     <button onclick="toggleMostrarP()" id="btn-P">poblacion</button>
                                 </div>
-                                <div class="col-2-5">
+                                <div class="col-3">
                                     <button onclick="toggleMostrarE()" id="btn-E"> economicos</button>
                                 </div>
-                                <div class="col-2-5">
+                                <div class="col-3">
                                     <button onclick="toggleMostrarS()" id="btn-S">sanitarios</button>
                                 </div>
-                                <div class="col-2-5">
-                                    <button onclick="toggleMostrarM()" id="btn-M">Machine Learning</button>
-                                </div>
+
                             </div>
+                            <hr>
+                            
+                            <center><h2>machineLearning</h2></center>
+                            <p>Veamos algunas de las gráficas generadas durante el proceso de Machine Learning: </p> 
+                                <button onclick="toggleMostrarM()" id="btn-M">Machine Learning</button>
+                            
                             <hr>
                             <div id="menu-gr-covid" style="display: none" >
                                 <div  class="row" >
-                                    <div class="col-6">
+                                    
                                         
                                             
                                             <blockquote>Esta gráfica representa la comparación entre el número de 
                                                   casos por millón de habitantes en un periodo de tiempo fijado
                                                 por el usuario y entre cualesquiera dos países también fijados por el usuario.
                                                  Esta gráficas es de líneas.</blockquote>
-                                                 <img src="images/graphs/avanzado/g1.jpg" >
+                                                 <center>  <img src="images/graphs/avanzado/g1.jpg" ></center>
 
                                                 </blockquote>
-                                    </div>     
-                                    <div class="col-6">
+                                       
+                                    
                                                 <blockquote>Otra de las gráficas que creemos que tiene mucho interés es un diagrama de sectores que representa la distribución de las 
                                                     nuevas muertes durante un periodo de tiempo fijado por el usuario por continentes. 
                                                 
-                                                <img src="images/graphs/avanzado/g2.jpg"  >
+                                                    <center> <img src="images/graphs/avanzado/g2.jpg"  ></center>
                                                 </blockquote>
-                                    </div>    
+                                      
                                           
                                                 <blockquote>
                                                     También es muy relevante la gráfica que nos muestra una comparación entre el número total de muertes 
@@ -116,80 +121,80 @@
                              </div>
                              <div id="menu-gr-poblacion" style="display: none" >
                                 <div  class="row" >
-                                    <div class="col-6">
+                                    
                                         <blockquote>
                                             Una de las gráficas más representativas es la que nos permite obtener la media el máximo y el mínimo de edad media por continent. 
-                                            <img src="images/graphs/avanzado/g4.jpg"  >
+                                            <center>  <img src="images/graphs/avanzado/g4.jpg"  ></center>
                                         </blockquote>
 
-                                    </div>
+                                    
                                 
-                                    <div class="col-6">
+                                    
                                         <blockquote>
                                             También son interesantes las gráficas que muestran los tops o bottoms de países en función 
                                             de un indicador poblacional como por ejemplo la esperanza de vida o la población mayor de 65 años. Mostramos aquí la primera.
-                                            <img src="images/graphs/avanzado/g5.jpg"  >
+                                            <center>  <img src="images/graphs/avanzado/g5.jpg"  ></center>
                                         </blockquote>
 
-                                    </div>
+                                    
                                 </div>
                              </div>
                              <div id="menu-gr-economico" style="display: none" >
                                 <div  class="row" >
-                                    <div class="col-6">
+                                    
                                         <blockquote>
                                             Una de las gráficas más representativas es la que nos permite obtener la media el    máximo y el mínimo del índice de camas de hospital por continente.
-                                            <img src="images/graphs/avanzado/g6.jpg"  >
+                                            <center> <img src="images/graphs/avanzado/g6.jpg"  ></center>
                                         </blockquote>
 
-                                    </div>
+                                    
                                 
-                                    <div class="col-6">
+                                    
                                         <blockquote>
                                             También son interesantes las gráficas que muestran los tops y bottoms de países 
                                             en función de un indicador económico como por ejemplo el producto interior bruto o el índice de pobreza extrema. 
-                                            <img src="images/graphs/avanzado/g7.jpg"  >
+                                            <center>  <img src="images/graphs/avanzado/g7.jpg"  ></center>
                                         </blockquote>
 
-                                    </div>
+                                    
                                 </div>
                              </div>
                              <div id="menu-gr-sanitario" style="display: none" >
                                 <div  class="row" >
-                                    <div class="col-6">
+                                    
                                                 <blockquote>
                                                     Una de las gráficas más representativas es la que nos permite obtener la media el 
                                                      máximo y el mínimo del índice de camas de hospital por continente
-                                                    <img src="images/graphs/avanzado/g8.jpg"  >
+                                                     <center>    <img src="images/graphs/avanzado/g8.jpg"  ></center>
                                                 </blockquote>
 
-                                    </div>
-                                    <div class="col-6">
+                                    
+                                    
                                         <blockquote>
                                             Otra gráfica importante es la que nos permite visualizar el top de los países con más médicos por cada 100000 habitantes
-                                            <img src="images/graphs/avanzado/g9.jpg"  >
+                                            <center> <img src="images/graphs/avanzado/g9.jpg"  ></center>
                                         </blockquote>
-                                    </div>
+                                    
                                     
                                 </div>
                              </div>
 
                              <div id="menu-gr-machine" style="display: none" >
-                               <p>Veamos algunas de las gráficas generadas durante el proceso de Machine Learning: </p> 
+                               
                                 <div  class="row" >
-                                    <div class="col-6">
+                                   
                                                 <blockquote>
                                                     Gráficas en 2 dimensiones, que dadas dos variables representan los elementos de la población coloreados en función del cluster al que pertenecen. 
-                                                    <img src="images/graphs/avanzado/g10.jpg"  >
+                                                   <center> <img src="images/graphs/avanzado/g10.jpg"  ></center>
                                                 </blockquote>
 
-                                    </div>
-                                    <div class="col-6">
+                                    
+                                    
                                         <blockquote>
                                     Gráficas en 3 dimensiones, que dadas tres variables representan los elementos de la población coloreados en función del cluster al que pertenecen. 
                                      <img src="images/graphs/avanzado/g11.jpg"  >
                                         </blockquote>
-                                    </div>
+                                   
 
                                         <blockquote>
                                             Además también se representa en un gráfico de líneas los valores del índice Silhouette que determina cuál es el número de cluster que mejores resultados va a obtener
@@ -199,7 +204,7 @@
                                         
 
                                     <blockquote>
-                                        En segundo lugar, otra funcionalidad clave de nuestro proyecto es el uso de Machine learning. Desde el primer momento consideramos muy interesante el tratar de encontrar relaciones entre
+                                        Otra funcionalidad clave de nuestro proyecto es el uso de Machine learning. Desde el primer momento consideramos muy interesante el tratar de encontrar relaciones entre
                                          los datos de la pandemia e indicadores económicos, poblacionales y sanitarios. Por ello, 
                                         aplicamos la técnica de clustering K-Means (donde cada elemento de la población era un país) para clasificar en grupos a los países teniendo en cuenta los indicadores previamente nombrados.
                                         <br>
@@ -236,34 +241,7 @@
                                             </li>
                                         </ol>
 
-                                        Otro aspecto muy novedoso de nuestra aplicación es que se ejecuta como un script normal de python, con esto conseguimos aunar todos los scripts y
-                                         funcionalidades de nuestra aplicación en una sola. Este script principal (main.py) funciona como un menú interactivo que va guiando al usuario por la 
-                                         aplicación y le va preguntando cuál es el siguiente paso que desea dar. De esta manera conseguimos una aplicación fácil de usar incluso para personas 
-                                         que no tengan conocimientos previos de informática.<br>
 
-                                            Veamos brevemente los pasos que debería seguir un usuario a la hora de utilizar nuestra aplicación.<br>
-
-                                            <ol>
-                                                <li>
-                                                    Al ejecutar ./main.py se le preguntará si está ejecutando el programa en un cluster o en local,
-                                                     esta comprobación es necesaria porque en el primer caso los ficheros deberán ser almacenados en hadoop FileSystem
-                                                </li>
-                                                <li>
-                                                    El siguiente paso (pensado más para usuarios experimentados) es fijar el número de instancias (en caso de que estemos ejecutando en un cluster) y el 
-                                                    número de cores (tanto en cluster como en local) que desea utilizar para ejecutar los scripts de spark, 
-                                                    pero lo mejor es que damos la opción de no explicitar estas cantidades en cuyo caso se utilizarán todas las instancias y todos los cores disponibles.
-                                                </li>
-                                                <li>
-                                                    En los siguientes pasos se permite al usuario hacer consultas sobre datos de coronavirus pero también sobre indicadores económicos, poblacionales y sanitarios. 
-                                                    Además permitimos desde este menú la descarga de los datasets más modernos y la ejecución de machine learning. 
-                                                </li>
-                                                <li>
-                                                    Pero… ¿Dónde se almacena y puedo visualizar toda la información de las consultas que voy realizando? Pues bien, toda la información se 
-                                                    almacena en un directorio asociado a la sesión que se puede identificar fácilmente por su marca de tiempo.
-                                                     Este directorio contendrá para cada consulta su output y en caso de que se haya generado, también la(s) gráfica(s) asociadas.
-                                                </li>
-
-                                            </ol>
 
 
                                     </blockquote>
