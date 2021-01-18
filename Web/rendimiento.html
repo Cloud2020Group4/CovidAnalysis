@@ -1,0 +1,282 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>Rendimiento</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper" class="fade-in">
+
+				<!-- Intro -->
+                <header id="header">
+                    <a href="../index.html" class="logo">RENDIMIENTO</a>
+                </header>
+
+
+				<!-- Nav -->
+				<nav id="nav">
+					<ul class="links">
+						<li class="active"><a href="..\index.html">Descripción del proyecto</a></li>
+						<li><a href ="funcionamiento.html"> Funcionamiento </a></li>
+						<li><a href="datasets.html">Datasets y Scripts</a></li>
+						<li><a href="sobreNosotros.html">Sobre Nosotros</a></li>
+						<li>
+							<select name="formal" onchange="javascript:handleSelect(this)">
+								<option value="">MÁS OPCIONES</option>
+								<option value="rendimiento.html">Rendimiento</option>
+								<option value="conclusion.html">conclusión</option>
+								<option value="sobreNosotros.html">Sobre Nosotros</option>
+							</select>
+						</li>					
+					</ul>
+
+ 
+
+
+									
+					<ul class="icons">
+						<li><a href="https://github.com/Cloud2020Group4/CovidAnalysis" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+					</ul>
+
+
+					
+
+				</nav>
+
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Featured Post -->
+							<article class="post featured">
+								<header class="major">
+								<!-- 	<span class="date">April 25, 2017</span> -->
+									<h2><a href="#">RENDIMIENTO</a></h2>
+						
+								</header>
+                                
+                                   
+                                <section>
+                                    <p>
+                                        Para medir el rendimiento de nuestra aplicación, se han realizado una serie de experimentos basados en la medición del tiempo de ejecución de diferentes 
+                                        funciones. El número de experimentos ha sido tal como para obtener resultados significativos. Para hacer estas mediciones se ha ejecutado el script
+                                         “main.py” con diferentes combinaciones de entrada de datos en dos infraestructuras con diferentes configuraciones de hardware y software:
+                                    </p>
+
+                                    <div clas="box" style="text-align: left;">
+                                        <ol>
+                                            <li>
+                                                <b>Modo Local</b><br>
+                                                 Instancia m4.xlarge en AWS. Esta instancia tiene las siguientes características:<br>
+                                                <div class="table-wrapper">
+                                                    <table>
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Instancia</th>
+                                                                <th>CPU virtual*</th>
+                                                                <th>Memoria</th>
+                                                                <th>Almacenamiento</th>
+                                                                <th>Ancho de Banda de EBS dedicado</th>
+                                                                <th>Rendimiento de red </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>m4.xlarge</td>
+                                                                <td>4</td>
+                                                                <td>16</td>
+                                                                <td>Solo EBS</td>
+                                                                <td>750</td>
+                                                                <td>Alto</td>
+                                                            </tr>
+                                                            
+                                                        </tbody>
+    
+                                                    </table>
+                                                </div>
+                                                
+                                            </li>
+                                            
+                                                        <li>
+                                                            <b>Modo Cluster</b>
+                                                            <br>
+                                                            Instancia m4.xlarge como maestra y varios nodos 
+                                                            principales m4.xlarge variando la cantidad de cores que utilizaba cada nodo.
+                                                        </li>
+                                                    </ol>
+                                                <p> Se han identificado tres bloques distintos de la aplicación para aplicar los experimentos sobre ellos:</p>
+                                                    <ol>
+                                                        <li><b>Consultas SQL</b> las más rápidas. Dependen del tamaño del dataset.</li>
+                                                        <li><b>Consulta SQL con cómputo. </b>Por ejemplo realizar medias. Un poco más lentas.
+                                                            También dependen del tamaño del dataset.</li>
+                                                        <li>
+
+                                                        <b>Machine Learning.</b>  Altamente paralelizadas. Las más lentas.
+                                                            </li>
+                                                    </ol>
+                                                    <hr>
+                                                <p> 
+                                                     Los resultados obtenidos han sido los siguientes: <br>
+                                                     (Los resultados obtenidos se expresan en tiempo de ejecución en minutos/segundos aproximados tras realizar una media.)
+                                                </p> 
+
+                                                <h4>Local</h4>
+                                                <p>Aparecen en la tabla los los valores más significativos de los experimentos, excluyendo aquellas combinaciones software
+                                                     (aumentando threads) que no obtienen ganancias significativas tras ellos.
+                                                </p>
+
+                                                <div class="table-wrapper">
+                                                    <table>
+                                                        <thead>
+                                                            <tr>
+                                                                <td></td>
+                                                                <th>1 thread</th>
+                                                                <th>4 thread</th>
+                                                                <th>Maximo Rendimiento</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+
+                                                            <tr>
+                                                                <td>SQL</td>
+                                                                <td>~20 segundos</td>
+                                                                <td>~18 segundos</td>
+                                                                <td>~15 segundos</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>SQL + Computo</td>
+                                                                <td>~35 segundos</td>
+                                                                <td>~29 segundos</td>
+                                                                <td>~20 segundos</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>ML</td>
+                                                                <td>~7 minutos</td>
+                                                                <td>~6 segundos 15 segundos</td>
+                                                                <td>~4 minutos 30 segundos</td>
+                                                            </tr>
+                                                        </tbody>
+
+                                                    </table>
+                                                    <p>*Como se ha explicado anteriormente, las consultas SQL dependen altamente del tamaño del dataset. Por lo tanto hay variedad en las
+                                                        medidas.</p>
+                                                </div>
+
+
+                                                         <h4>Cluster</h4>
+                                                         <p>Dado que los experimentos se ha realizado con la instancia m4.xlarge no se puede aumentar en gran cantidad el número de nodos esclavos. 
+                                                             En los nodos que aparecen en la tabla no se cuenta el nodo maestro</p>
+
+                                                             <div class="table-wrapper">
+                                                                <table>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <td></td>
+                                                                            <th>1 thread</th>
+                                                                            <th>4 thread</th>
+                                                                            <th>Maximo Rendimiento</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+            
+                                                                        <tr>
+                                                                            <td>SQL</td>
+                                                                            <td>-</td>
+                                                                            <td>-</td>
+                                                                            <td>~3 minutos 30 segundos</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>SQL + Computo</td>
+                                                                            <td>-</td>
+                                                                            <td>-</td>
+                                                                            <td>~2 minutos 50 segundos</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>ML</td>
+                                                                            <td>-</td>
+                                                                            <td>~15 segundos</td>
+                                                                            <td>~2 minutos 30 segundos</td>
+                                                                        </tr>
+                                                                    </tbody>
+            
+                                                                </table>
+                                                                <p>*Los resultados obtenidos no muestran ninguna ganancia 
+                                                                    con respecto al modo local por lo tanto no son considerados.</p>
+                                                            </div>
+
+
+                                                            <div  class="row" >
+                                                                <div class="col-6">
+                                                                         
+                                                                             <img src="images/graphs/rendimiento/g1.jpg" >
+                            
+                                                                        
+                                                                </div>     
+                                                                <div class="col-6">
+                                                                           
+                                                                            <img src="images/graphs/rendimiento/g2.jpg"  >
+                                                                            
+                                                                </div>    
+                                                                      
+                                                            <p>Los resultados de las gráficas se expresan en segundos para la mejor comprensión de los valores comparados.</p>
+                                                            </div>
+
+
+
+                                                            <b>Conclusiones</b>
+                                                            <p>  Se observa que el mayor rendimiento obtenido al pasar de local a cluster es en el bloque de Machine Learning puesto que éste necesita de gran paralelización, obtenida gracias a la existencia de un mayor número de procesadores puesto que existen más nodos trabajando para el nodo maestro. La mejora a máximo rendimiento es de un 55%.
+                                                                En cuanto los demás bloques la ganancia no se considera significativa 
+                                                                </p>
+
+                                                
+                                               
+                                    </div>
+                                </section>
+
+
+							</article>
+
+						<!-- Posts -->
+							
+
+							
+						
+							
+
+
+
+					</div>
+
+				
+
+				<!-- Copyright -->
+					<div id="copyright">
+						<ul><li>CARLA MARTÍNEZ NIETO-MARQUEZ</li><li>DANIEL LEDESMA VENTURA</li><li>JAVIER GUZMÁN MUÑOZ</li><li>GONZALO FERNÁNDEZ MEJÍAS</li><li>PABLO MORER OLMOS</li></ul>
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+			<script>
+				function handleSelect(elm)
+				{
+					window.location = elm.value;
+					}
+			</script>
+
+	</body>
+</html>

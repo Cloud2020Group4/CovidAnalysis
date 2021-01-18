@@ -29,17 +29,28 @@
 					</header>
 
 				<!-- Nav -->
-					<nav id="nav">
-						<ul class="links">
-							<li ><a href="../index.html">Ideas Principales del Proyecto</a></li>
-							<li><a href ="funcionamiento.html"> Funcionamiento </a></li>
-							<li><a href="datasets.html">Datasets y Scripts</a></li>
-							<li><a href="sobreNosotros.html">Sobre Nosotros</a></li>
-						</ul>
-						<ul class="icons">
-							<li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
-						</ul>
-					</nav>
+				<nav id="nav">
+					<ul class="links">
+						<li><a href="..\index.html">Descripción del proyecto</a></li>
+						<li ><a href ="funcionamiento.html"> Funcionamiento </a></li>
+						<li><a href="datasets.html">Datasets y Scripts</a></li>
+						<li><a href="sobreNosotros.html">Sobre Nosotros</a></li>
+						<li>
+							<select name="formal" onchange="javascript:handleSelect(this)">
+								<option value="">MÁS OPCIONES</option>
+								<option value="rendimiento.html">Rendimiento</option>
+								<option value="conclusion.html">conclusión</option>
+								<option value="sobreNosotros.html">Sobre Nosotros</option>
+							</select>
+						</li>					
+					</ul>
+
+							
+					<ul class="icons">
+						<li><a href="https://github.com/Cloud2020Group4/CovidAnalysis" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+					</ul>
+
+				</nav>
 
 				<!-- Main -->
 					<div id="main">
@@ -51,15 +62,41 @@
 									<h2><a href="#">Problemas a Resolver</a></h2>
 						
 								</header>
-                                <a href="https://github.com/Cloud2020Group4/CovidAnalysis" class="image main"><img src="images/covid2.jpg" alt="" /></a>
-                                
-                                <p>La gran cantidad de datos de los que disponemos debido a la situación actual de pandemia hace que sea necesario el procesamiento 
-                                    (limpieza, extracción de características, organización, consulta...) de los mismos antes de pasar a su análisis. Además consideramos 
-                                    muy interesante y relevante el encontrar relaciones de estos datos con otros como indicadores económicos (Producto interior bruto) y 
-                                    sanitarios (Número de médicos por mil habitantes y concepción sobre vacunas). Por ello en nuestro proyecto llevaremos a cabo tres fases
-                                     fundamentales: en primer lugar el procesamiento de datos, en segundo lugar el análisis y visualización de los mismos para comprenderlos 
-                                     mejor y finalmente la aplicación de técnicas de Machine Learning para encontrar relaciones entre las distintas fuentes de datos y análisis 
-                                     de los resultados.</p>
+								<a href="https://github.com/Cloud2020Group4/CovidAnalysis" class="image main"><img src="images/covid2.jpg" alt="" /></a>
+								
+								<h3>Descripción de la solución y comparación con otros proyectos existentes</h3>
+								<section>
+                                <div id="c" style="text-align: left;">
+                                <blockquote>La aparición del COVID-19 no ha distinguido entre países, y ha llevado, en mejor o peor medida, grandes daños en ámbitos económicos, demográficos
+									 y sobre todo sanitarios.<br>
+									Con este proyecto intentamos reflejar la situación de una gran cantidad de países a lo largo del tiempo, y estudiar qué sectores han variado más gracias
+									 a la llegada de este virus. Además, consideramos muy interesante y relevante realizar comparativas entre los diversos países, y así encontrar relaciones
+									  de estos datos mediante una serie de indicadores.<br>
+									Este estudio no sería posible sin un tratamiento de datos. Para obtener una información relevante, es necesario un procesamiento de estos datos (limpieza, extracción de características, organización, consulta...) antes de pasar a su análisis.
+									Por lo que podríamos decir que, con este proyecto, buscamos una solución sencilla a la hora de entender cómo está afectando el COVID-19 en los sectores 
+									más importantes de cada país.<br>
+								</blockquote>
+								
+								<blockquote>
+									<p>Uno de ellos es GDPS (Global Data Science Project), realizado en el Centro Nacional de Supercomputación en Barcelona. Este proyecto se encarga de analizar
+									 los impactos no tan directos del coronavirus en el mundo, estudian diferentes comportamientos en el distanciamiento físico, en el cambio de las emociones,
+									 en el día a día de las personas y también realizan una predicción de casos infectados.<br>
+									<center><a href="https://www.covid19analytics.org">https://www.covid19analytics.org</a>/<br></center>
+								</p>
+								<p>
+									Otro proyecto a destacar es un TimeLine donde se muestra la expansión del virus en Estados Unidos, desarrollado por la universidad William and Mary en 
+									Virginia. En este proyecto han relacionado el número de contagios con los brotes que han ido apareciendo, con ello muestran la ruta del coronavirus
+									 en el tiempo.<br>
+									<center><a href="https://storymaps.arcgis.com/stories/b73259fdc8ea4381adf097470e400adc" >https://storymaps.arcgis.com/stories/b73259fdc8ea4381adf097470e400adc</a><br></center>
+								</p>
+								<p>
+									Por último, el proyecto que más se asemeja al nuestro es el realizado en la Universidad de Boston,
+									 debido a que trata los mismos ámbitos (económico, demográfico y sanitario) pero solo en la zona de África.<br>
+									<center><a href="https://sites.bu.edu/covid-19-in-africa/">https://sites.bu.edu/covid-19-in-africa/</a></center>
+								</p>
+								</blockquote>
+							</div>
+							</section>
 								<ul class="actions special">
                                     <ul class="actions special">
 										<li><a href="../index.html" class="button">Volver</a></li>
@@ -100,6 +137,12 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+			<script>
+				function handleSelect(elm)
+				{
+					window.location = elm.value;
+					}
+			</script>
 
 	</body>
 </html>

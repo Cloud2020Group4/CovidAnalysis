@@ -1,0 +1,377 @@
+<!DOCTYPE HTML>
+<!--
+	Massively by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Covid-19 Sobre Nosotros</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<a href="../index.html" class="logo">Información</a>
+					</header>
+
+				<!-- Nav -->
+				<nav id="nav">
+					<ul class="links">
+						<li><a href="..\index.html">Descripción del proyecto</a></li>
+						<li ><a href ="funcionamiento.html"> Funcionamiento </a></li>
+						<li><a href="datasets.html">Datasets y Scripts</a></li>
+						<li><a href="sobreNosotros.html">Sobre Nosotros</a></li>
+						<li>
+							<select name="formal" onchange="javascript:handleSelect(this)">
+								<option value="">MÁS OPCIONES</option>
+								<option value="rendimiento.html">Rendimiento</option>
+								<option value="conclusion.html">conclusión</option>
+								<option value="sobreNosotros.html">Sobre Nosotros</option>
+							</select>
+						</li>					
+					</ul>
+
+							
+					<ul class="icons">
+						<li><a href="https://github.com/Cloud2020Group4/CovidAnalysis" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+					</ul>
+
+				</nav>
+
+				<!-- Main -->
+				<div id="main">
+                   
+						<section>
+                            <center><h2>Caracteristicas avanzadas</h2></center>
+                            <blockquote>
+                                En nuestro proyecto hemos hecho un uso intensivo de 2 funcionalidades que iban más allá de los explicado en clase.<br>
+                                En primer lugar, una funcionalidad clave de nuestro proyecto es la <b>graficación</b> para la que utilizamos la librería <a href="https://matplotlib.org/" style="color: blue;">matplotlib</a>. El motivo de haberle
+                                dado tanta
+                                importancia a la visualización de los datos es porque consideramos que el primer paso para entender correctamente la información es visualizarla gráficamente.
+                                Por esto, nuestra aplicación es capaz de generar gráficas para casi todas las consultas que permitimos hacer sobre los numerosos datasets con los que
+                                 trabajamos (es decir sobre datos de covid, datos poblacionales, económicos y sanitarios). Pero vamos mucho más allá de esto, pues también graficamos
+                                todos los resultados obtenidos 
+                                durante la fase de Machine Learning, mostramos gráficamente la organización en clústeres de nuestra población tanto en 2 dimensiones como en 3 dimensiones. 
+                            </blockquote>
+                            <hr>
+                            <p>Veamos algunas de las gráficas que han sido obtenidas mediante consultas y que consideramos que son más interesantes</p>
+
+                            <div class="row" >
+                                <div class="col-2-5" >
+                                    <button onclick="toggleMostrarC()" id="btn-C">Covid</button>
+                                </div>
+                                <div class="col-2-5">
+                                    <button onclick="toggleMostrarP()" id="btn-P">poblacion</button>
+                                </div>
+                                <div class="col-2-5">
+                                    <button onclick="toggleMostrarE()" id="btn-E"> economicos</button>
+                                </div>
+                                <div class="col-2-5">
+                                    <button onclick="toggleMostrarS()" id="btn-S">sanitarios</button>
+                                </div>
+                                <div class="col-2-5">
+                                    <button onclick="toggleMostrarM()" id="btn-M">Machine Learning</button>
+                                </div>
+                            </div>
+                            <hr>
+                            <div id="menu-gr-covid" style="display: none" >
+                                <div  class="row" >
+                                    <div class="col-6">
+                                        
+                                            
+                                            <blockquote>Esta gráfica representa la comparación entre el número de 
+                                                  casos por millón de habitantes en un periodo de tiempo fijado
+                                                por el usuario y entre cualesquiera dos países también fijados por el usuario.
+                                                 Esta gráficas es de líneas.</blockquote>
+                                                 <img src="images/graphs/avanzado/g1.jpg" >
+
+                                                </blockquote>
+                                    </div>     
+                                    <div class="col-6">
+                                                <blockquote>Otra de las gráficas que creemos que tiene mucho interés es un diagrama de sectores que representa la distribución de las 
+                                                    nuevas muertes durante un periodo de tiempo fijado por el usuario por continentes. 
+                                                
+                                                <img src="images/graphs/avanzado/g2.jpg"  >
+                                                </blockquote>
+                                    </div>    
+                                          
+                                                <blockquote>
+                                                    También es muy relevante la gráfica que nos muestra una comparación entre el número total de muertes 
+                                                    por mes durante toda la pandemia entre cualesquiera dos países fijados por el usuario. Esta gráfica está representada como un
+                                                     gráfico de barras.
+                                                <br>
+                                                
+                                               <center><img src="images/graphs/avanzado/g3.jpg" height="350"></center> 
+                                                 </blockquote>
+
+                                </div>
+                             </div>
+                             <div id="menu-gr-poblacion" style="display: none" >
+                                <div  class="row" >
+                                    <div class="col-6">
+                                        <blockquote>
+                                            Una de las gráficas más representativas es la que nos permite obtener la media el máximo y el mínimo de edad media por continent. 
+                                            <img src="images/graphs/avanzado/g4.jpg"  >
+                                        </blockquote>
+
+                                    </div>
+                                
+                                    <div class="col-6">
+                                        <blockquote>
+                                            También son interesantes las gráficas que muestran los tops o bottoms de países en función 
+                                            de un indicador poblacional como por ejemplo la esperanza de vida o la población mayor de 65 años. Mostramos aquí la primera.
+                                            <img src="images/graphs/avanzado/g5.jpg"  >
+                                        </blockquote>
+
+                                    </div>
+                                </div>
+                             </div>
+                             <div id="menu-gr-economico" style="display: none" >
+                                <div  class="row" >
+                                    <div class="col-6">
+                                        <blockquote>
+                                            Una de las gráficas más representativas es la que nos permite obtener la media el    máximo y el mínimo del índice de camas de hospital por continente.
+                                            <img src="images/graphs/avanzado/g6.jpg"  >
+                                        </blockquote>
+
+                                    </div>
+                                
+                                    <div class="col-6">
+                                        <blockquote>
+                                            También son interesantes las gráficas que muestran los tops y bottoms de países 
+                                            en función de un indicador económico como por ejemplo el producto interior bruto o el índice de pobreza extrema. 
+                                            <img src="images/graphs/avanzado/g7.jpg"  >
+                                        </blockquote>
+
+                                    </div>
+                                </div>
+                             </div>
+                             <div id="menu-gr-sanitario" style="display: none" >
+                                <div  class="row" >
+                                    <div class="col-6">
+                                                <blockquote>
+                                                    Una de las gráficas más representativas es la que nos permite obtener la media el 
+                                                     máximo y el mínimo del índice de camas de hospital por continente
+                                                    <img src="images/graphs/avanzado/g8.jpg"  >
+                                                </blockquote>
+
+                                    </div>
+                                    <div class="col-6">
+                                        <blockquote>
+                                            Otra gráfica importante es la que nos permite visualizar el top de los países con más médicos por cada 100000 habitantes
+                                            <img src="images/graphs/avanzado/g9.jpg"  >
+                                        </blockquote>
+                                    </div>
+                                    
+                                </div>
+                             </div>
+
+                             <div id="menu-gr-machine" style="display: none" >
+                               <p>Veamos algunas de las gráficas generadas durante el proceso de Machine Learning: </p> 
+                                <div  class="row" >
+                                    <div class="col-6">
+                                                <blockquote>
+                                                    Gráficas en 2 dimensiones, que dadas dos variables representan los elementos de la población coloreados en función del cluster al que pertenecen. 
+                                                    <img src="images/graphs/avanzado/g10.jpg"  >
+                                                </blockquote>
+
+                                    </div>
+                                    <div class="col-6">
+                                        <blockquote>
+                                    Gráficas en 3 dimensiones, que dadas tres variables representan los elementos de la población coloreados en función del cluster al que pertenecen. 
+                                     <img src="images/graphs/avanzado/g11.jpg"  >
+                                        </blockquote>
+                                    </div>
+
+                                        <blockquote>
+                                            Además también se representa en un gráfico de líneas los valores del índice Silhouette que determina cuál es el número de cluster que mejores resultados va a obtener
+                                           <center> <img src="images/graphs/avanzado/g12.jpg"  ></center>
+                                        </blockquote>
+
+                                        
+
+                                    <blockquote>
+                                        En segundo lugar, otra funcionalidad clave de nuestro proyecto es el uso de Machine learning. Desde el primer momento consideramos muy interesante el tratar de encontrar relaciones entre
+                                         los datos de la pandemia e indicadores económicos, poblacionales y sanitarios. Por ello, 
+                                        aplicamos la técnica de clustering K-Means (donde cada elemento de la población era un país) para clasificar en grupos a los países teniendo en cuenta los indicadores previamente nombrados.
+                                        <br>
+                                        Sacamos algunas conclusiones interesantes durante este proceso: 
+                                        <ol>
+                                            <li>
+                                                No encontramos ninguna relación clara entre la importancia que se le da a la vacunación y el número total de muertes por cada millón de habitantes. 
+                                                Como podemos observar en la imagen la gran mayoría de los países dan un porcentaje considerablemente de importancia a las vacunas y por tanto no podemos 
+                                                sacar ninguna conclusión clara.
+                                                <br>
+                                                <center>  <img src="images/graphs/avanzado/g13.jpg"  > </center> 
+                                            </li>
+                                            <li>
+                                                Sí encontramos una clara relación entre el número de médicos por cada 100000 habitantes y el número total de muertes por cada millón de habitantes.
+                                                 Y es que según los resultados que hemos obtenido parece ser que los países que tienen menos médicos por habitante tienen también un menor número de muertes.
+                                                  Esto va en contra de lo que podríamos pensar en un principio, podemos encontrar la justificación en que estos países con pocos médicos por habitantes, 
+                                                  son también países con pocos recursos y donde los datos del coronavirus son recogidos con menos exactitud porque los medios de los que disponen no son comparables 
+                                                  los de otros países más ricos.<br>
+                                                El algoritmo de clustering diferencia en este caso dos grupos, uno el de los países con pocos médicos por cada 100.000 habitantes y 
+                                                con mortalidad relativamente baja y otro con más médicos por cada 100.000 habitantes
+                                                (no se puede determinar que estos países tengan un menor número total de muertes).
+                                                <br>
+                                                <center>   <img src="images/graphs/avanzado/g14.jpg"  ></center> 
+
+                                            </li>
+
+                                            <li>
+                                                También encontramos una relación bastante esperable, y es que los países con un GDP bajo tienen menos camas de hospital por cada 100.000 habitantes.
+                                                 Sin embargo, un alto GDP no está relacionado necesariamente con un mayor número de camas por habitantes. Como podemos ver en el siguiente gráfico.
+                                                 <center>  <img src="images/graphs/avanzado/g15.jpg"  ></center> 
+                                                 <br>
+                                                 De nuevo en este caso el algoritmo de clustering, identifica dos grupos, por un lado 	un lado un cluster formado por los países con menos muertes, menor GDP y menor 	de camas de hospital por habitante y otro cluster donde los países tienen mayor GDP 
+                                                 y mayor número de camas pero donde las muertes por COVID se mueven en una 	escala bastante amplia.
+                                            </li>
+                                        </ol>
+
+                                        Otro aspecto muy novedoso de nuestra aplicación es que se ejecuta como un script normal de python, con esto conseguimos aunar todos los scripts y
+                                         funcionalidades de nuestra aplicación en una sola. Este script principal (main.py) funciona como un menú interactivo que va guiando al usuario por la 
+                                         aplicación y le va preguntando cuál es el siguiente paso que desea dar. De esta manera conseguimos una aplicación fácil de usar incluso para personas 
+                                         que no tengan conocimientos previos de informática.<br>
+
+                                            Veamos brevemente los pasos que debería seguir un usuario a la hora de utilizar nuestra aplicación.<br>
+
+                                            <ol>
+                                                <li>
+                                                    Al ejecutar ./main.py se le preguntará si está ejecutando el programa en un cluster o en local,
+                                                     esta comprobación es necesaria porque en el primer caso los ficheros deberán ser almacenados en hadoop FileSystem
+                                                </li>
+                                                <li>
+                                                    El siguiente paso (pensado más para usuarios experimentados) es fijar el número de instancias (en caso de que estemos ejecutando en un cluster) y el 
+                                                    número de cores (tanto en cluster como en local) que desea utilizar para ejecutar los scripts de spark, 
+                                                    pero lo mejor es que damos la opción de no explicitar estas cantidades en cuyo caso se utilizarán todas las instancias y todos los cores disponibles.
+                                                </li>
+                                                <li>
+                                                    En los siguientes pasos se permite al usuario hacer consultas sobre datos de coronavirus pero también sobre indicadores económicos, poblacionales y sanitarios. 
+                                                    Además permitimos desde este menú la descarga de los datasets más modernos y la ejecución de machine learning. 
+                                                </li>
+                                                <li>
+                                                    Pero… ¿Dónde se almacena y puedo visualizar toda la información de las consultas que voy realizando? Pues bien, toda la información se 
+                                                    almacena en un directorio asociado a la sesión que se puede identificar fácilmente por su marca de tiempo.
+                                                     Este directorio contendrá para cada consulta su output y en caso de que se haya generado, también la(s) gráfica(s) asociadas.
+                                                </li>
+
+                                            </ol>
+
+
+                                    </blockquote>
+                                    
+                                </div>
+                             </div>
+						</section>
+
+			</div>		
+				<!-- Copyright -->
+				<div id="copyright">
+					<ul><li>CARLA MARTÍNEZ NIETO-MARQUEZ</li><li>DANIEL LEDESMA VENTURA</li><li>JAVIER GUZMÁN MUÑOZ</li><li>GONZALO FERNÁNDEZ MEJÍAS</li><li>PABLO MORER OLMOS</li></ul>
+				</div>
+
+
+
+		</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+			
+
+
+<script>
+
+
+
+	function toggleMostrarC() {
+	    var menuBox = document.getElementById('menu-gr-covid');    
+		if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
+			menuBox.style.display = "none";
+		}
+		else { // if is menuBox hidden, display it
+            menuBox.style.display = "block";
+            document.getElementById('menu-gr-poblacion').style.display="none";
+            document.getElementById('menu-gr-economico').style.display="none";
+            document.getElementById('menu-gr-sanitario').style.display="none";
+            document.getElementById('menu-gr-machine').style.display="none";
+		}
+    }
+    function toggleMostrarP() {
+        var menuBox = document.getElementById('menu-gr-poblacion');    
+		if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
+			menuBox.style.display = "none";
+		}
+		else { // if is menuBox hidden, display it
+            menuBox.style.display = "block";
+            document.getElementById('menu-gr-covid').style.display="none";
+            document.getElementById('menu-gr-economico').style.display="none";
+            document.getElementById('menu-gr-sanitario').style.display="none";
+            document.getElementById('menu-gr-machine').style.display="none";
+		}
+    }
+    function toggleMostrarE() {
+	    var menuBox = document.getElementById('menu-gr-economico');    
+		if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
+			menuBox.style.display = "none";
+		}
+		else { // if is menuBox hidden, display it
+            menuBox.style.display = "block";
+            document.getElementById('menu-gr-covid').style.display="none";
+            document.getElementById('menu-gr-poblacion').style.display="none";
+            document.getElementById('menu-gr-sanitario').style.display="none";
+            document.getElementById('menu-gr-machine').style.display="none";
+		}
+    }
+    function toggleMostrarS() {
+	    var menuBox = document.getElementById('menu-gr-sanitario');    
+		if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
+			menuBox.style.display = "none";
+		}
+		else { // if is menuBox hidden, display it
+            menuBox.style.display = "block";
+            document.getElementById('menu-gr-covid').style.display="none";
+            document.getElementById('menu-gr-poblacion').style.display="none";
+            document.getElementById('menu-gr-economico').style.display="none";
+            document.getElementById('menu-gr-machine').style.display="none";
+		}
+    }
+    function toggleMostrarM() {
+	    var menuBox = document.getElementById('menu-gr-machine');    
+		if(menuBox.style.display == "block") { // if is menuBox displayed, hide it
+			menuBox.style.display = "none";
+		}
+		else { // if is menuBox hidden, display it
+            menuBox.style.display = "block";
+            document.getElementById('menu-gr-covid').style.display="none";
+            document.getElementById('menu-gr-poblacion').style.display="none";
+            document.getElementById('menu-gr-economico').style.display="none";
+            document.getElementById('menu-gr-sanitario').style.display="none";
+		}
+    }
+
+	function handleSelect(elm)
+	{
+		window.location = elm.value;
+	}
+</script>
+
+
+	</body>
+</html>
+
+  
